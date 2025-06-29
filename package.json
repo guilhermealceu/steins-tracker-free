@@ -1,0 +1,14 @@
+{
+  "name": "status-gamer",
+  "version": "1.0.0",
+  "description": "Monitor de tempo de jogo",
+  "bin": "monitor.js",
+  "type": "module",
+  "scripts": {},
+  "dependencies": {
+    "ps-list": "^8.0.0",
+    "vdf-parser": "^1.1.0",
+    "regedit": "^3.0.3",
+    "node-notifier": "^10.0.1"
+  }
+}

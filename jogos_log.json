@@ -1,0 +1,44 @@
+[
+  {
+    "jogo": "Valorant",
+    "inicio": "2025-06-28T02:47:05.871Z",
+    "fim": "2025-06-28T02:48:25.938Z",
+    "tempoTotalMin": 1,
+    "data": "2025-06-28T02:48:25.939Z"
+  },
+  {
+    "jogo": "Valorant",
+    "inicio": "2025-06-29T00:25:15.979Z",
+    "fim": "2025-06-29T00:31:16.208Z",
+    "tempoTotalMin": 15,
+    "data": "2025-06-29T00:31:16.209Z"
+  },
+  {
+    "jogo": "EAAntiCheat.GameServiceLauncher.exe",
+    "inicio": "2025-06-29T00:39:56.629Z",
+    "fim": "2025-06-29T00:42:16.826Z",
+    "tempoTotalMin": 2,
+    "data": "2025-06-29T00:42:16.826Z"
+  },
+  {
+    "jogo": "Battlefield 2042",
+    "inicio": "2025-06-29T00:40:56.713Z",
+    "fim": "2025-06-29T00:52:16.975Z",
+    "tempoTotalMin": 11,
+    "data": "2025-06-29T00:52:16.976Z"
+  },
+  {
+    "jogo": "wallpaper32.exe",
+    "inicio": "2025-06-29T01:51:49.095Z",
+    "fim": "2025-06-29T01:54:39.189Z",
+    "tempoTotalMin": 3,
+    "data": "2025-06-29T01:54:39.190Z"
+  },
+  {
+    "jogo": "Black Desert",
+    "inicio": "2025-06-29T02:28:52.334Z",
+    "fim": "2025-06-29T02:30:22.407Z",
+    "tempoTotalMin": 2,
+    "data": "2025-06-29T02:30:22.408Z"
+  }
+]
