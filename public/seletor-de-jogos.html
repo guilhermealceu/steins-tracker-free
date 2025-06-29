@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selecionar Jogos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #00ff88;
+      --primary-hover: #00e67a;
+      --secondary: #1a1a2e;
+      --background: #0f0f1a;
+      --surface: #161625;
+      --text-primary: #f0f0f0;
+      --text-secondary: #b8b8b8;
+      --border-radius: 12px;
+      --shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--background);
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+      line-height: 1.6;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--primary), #00b3ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    h2 {
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: var(--text-secondary);
+    }
+
+    .actions {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    button {
+      background-color: var(--primary);
+      border: none;
+      border-radius: var(--border-radius);
+      padding: 0.8rem 1.5rem;
+      font-weight: 600;
+      font-size: 1rem;
+      color: #121212;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    #btnHome {
+      background-color: var(--surface);
+      color: var(--primary);
+    }
+
+    #btnHome:hover {
+      background-color: #1e1e3a;
+    }
+
+    #btndeletor {
+      background-color: var(--surface);
+      color: var(--primary);
+    }
+
+    #btndeletor:hover {
+      background-color: #eb4a0b;
+    }
+
+    .games-list {
+      background: var(--surface);
+      border-radius: var(--border-radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .game-item {
+      display: flex;
+      align-items: center;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      transition: var(--transition);
+    }
+
+    .game-item:last-child {
+      border-bottom: none;
+    }
+
+    .game-item:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .game-checkbox {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--text-secondary);
+      border-radius: 4px;
+      margin-right: 1rem;
+      cursor: pointer;
+      position: relative;
+      transition: var(--transition);
+    }
+
+    .game-checkbox:checked {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .game-checkbox:checked::after {
+      content: '✓';
+      position: absolute;
+      color: #121212;
+      font-size: 14px;
+      font-weight: bold;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .game-label {
+      flex: 1;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .game-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .game-action-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0.3rem;
+      transition: var(--transition);
+      border-radius: 4px;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .game-action-btn:hover {
+      color: var(--primary);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .game-action-btn.delete:hover {
+      color: #ff4444;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: var(--surface);
+      padding: 2rem;
+      border-radius: var(--border-radius);
+      width: 90%;
+      max-width: 500px;
+      box-shadow: var(--shadow);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.8rem;
+      background: var(--background);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--border-radius);
+      color: var(--text-primary);
+      font-family: inherit;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    /* Scrollbar styling */
+    .games-list::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .games-list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+    }
+
+    .games-list::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 4px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .actions {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <h1>tracKerGG</h1>
+      <h2>Selecione os jogos a monitorar</h2>
+    </header>
+
+    <div class="actions">
+      <button id="btnHome">
+        <span>🏠</span>
+        <span>Voltar para Página Principal</span>
+      </button>
+      <button id="btndeletor">
+        <span>❌</span>
+        <span>Deletor</span>
+      </button>
+      <button id="btnAdicionarJogo">
+        <span>➕</span>
+        <span>Adicionar jogo via EXE</span>
+      </button>
+      <input type="file" id="inputExe" accept=".exe" />
+    </div>
+
+    <div class="games-list" id="jogosCheckboxes" aria-label="Lista de jogos para monitorar" role="list"></div>
+  </div>
+
+  <!-- Modal para editar nome do jogo -->
+  <div class="modal" id="editModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Editar Nome do Jogo</h3>
+        <button class="modal-close" id="closeModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="editExeName">Nome do arquivo EXE</label>
+          <input type="text" id="editExeName" readonly>
+        </div>
+        <div class="form-group">
+          <label for="editFriendlyName">Nome amigável</label>
+          <input type="text" id="editFriendlyName">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="cancelEdit">Cancelar</button>
+        <button id="saveEdit" style="background-color: var(--primary); color: #121212;">Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const nomeAmigavel = {
+      'VALORANT-Win64-Shipping.exe': 'Valorant',
+      'GTA5.exe': 'GTA V',
+      'cs2.exe': 'Counter-Strike 2',
+      'MinecraftLauncher.exe': 'Minecraft Launcher',
+      'Minecraft.exe': 'Minecraft',
+      'BF2042.exe': 'Battlefield 2042',
+      'BlackDesert64.exe': 'Black Desert',
+      'ForzaHorizon5.exe': 'Forza Horizon 5',
+      'RDR2.exe': 'Red Dead Redemption 2',
+      'FallenDoll.exe': 'Fallen Doll',
+      'BladeAndSorcery.exe': 'Blade and Sorcery',
+      'Pavlov-Win64-Shipping.exe': 'Pavlov VR',
+      'Pavlov.exe': 'Pavlov VR (alternativo)',
+      'Beat Saber.exe': 'Beat Saber',
+      'VRChat.exe': 'VRChat',
+      'ChilloutVR.exe': 'Chillout VR',
+      'Starfield.exe': 'Starfield',
+      'LeagueClient.exe': 'League of Legends',
+      'eldenring.exe': 'Elden Ring'
+    };
+
+    const jogosManuais = Object.keys(nomeAmigavel);
+    const API_BASE = '/api';
+    async function obterSelecionados() {
+      try {
+        const res = await fetch(`${API_BASE}/jogos-selecionados`);
+        if (!res.ok) return jogosManuais;
+        const json = await res.json();
+        return Array.isArray(json) && json.length > 0 ? json : jogosManuais;
+      } catch {
+        return jogosManuais;
+      }
+    }
+
+    async function salvarSelecionados(selecionados) {
+      try {
+        await fetch('/api/jogos-selecionados', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(selecionados)
+        });
+      } catch (err) {
+        alert('Erro ao salvar seleção de jogos.');
+        console.error(err);
+      }
+    }
+
+    async function salvarNomeAmigavel(exeName, friendlyName) {
+      try {
+        await fetch(`${API_BASE}/nomes-amigaveis`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ exeName, friendlyName })
+        });
+      } catch (err) {
+        console.error('Erro ao salvar nome amigável:', err);
+      }
+    }
+
+    async function removerJogo(exeName) {
+      try {
+        // Remove dos selecionados
+        let selecionados = await obterSelecionados();
+        selecionados = selecionados.filter(jogo => jogo !== exeName);
+        await salvarSelecionados(selecionados);
+
+        // Remove do nomeAmigavel se não for um dos manuais
+        if (!jogosManuais.includes(exeName)) {
+          await fetch('/api/nomes-amigaveis', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ exeName })
+          });
+        }
+
+        await renderizarCheckboxes();
+      } catch (err) {
+        alert('Erro ao remover jogo.');
+        console.error(err);
+      }
+    }
+
+    async function renderizarCheckboxes() {
+      const container = document.getElementById('jogosCheckboxes');
+      container.innerHTML = '';
+      const selecionados = await obterSelecionados();
+
+      // Carregar nomes amigáveis personalizados do servidor
+      try {
+        const res = await fetch('/api/nomes-amigaveis');
+        if (res.ok) {
+          const customNames = await res.json();
+          Object.assign(nomeAmigavel, customNames);
+        }
+      } catch (err) {
+        console.error('Erro ao carregar nomes amigáveis:', err);
+      }
+
+      // Unir jogosManuais + extras (manter ordem e evitar repetição)
+      const todosJogos = [...new Set([...jogosManuais, ...selecionados])];
+
+      todosJogos.forEach(jogo => {
+        const item = document.createElement('div');
+        item.className = 'game-item';
+        item.setAttribute('role', 'listitem');
+
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.className = 'game-checkbox';
+        input.id = `game-${jogo.replace(/\W/g, '-')}`;
+        input.value = jogo;
+        input.checked = selecionados.includes(jogo);
+        input.addEventListener('change', async () => {
+          const novos = [...document.querySelectorAll('#jogosCheckboxes input:checked')].map(cb => cb.value);
+          await salvarSelecionados(novos);
+        });
+
+        const label = document.createElement('label');
+        label.className = 'game-label';
+        label.htmlFor = input.id;
+        label.textContent = nomeAmigavel[jogo] || jogo;
+
+        const actions = document.createElement('div');
+        actions.className = 'game-actions';
+
+        const editBtn = document.createElement('button');
+        editBtn.className = 'game-action-btn';
+        editBtn.innerHTML = '<i class="fas fa-edit"></i>';
+        editBtn.title = 'Editar nome';
+        editBtn.addEventListener('click', () => abrirModalEdicao(jogo));
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'game-action-btn delete';
+        deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+        deleteBtn.title = 'Remover jogo';
+        deleteBtn.addEventListener('click', () => {
+          if (confirm(`Tem certeza que deseja remover "${nomeAmigavel[jogo] || jogo}" da lista?`)) {
+            removerJogo(jogo);
+          }
+        });
+
+        actions.appendChild(editBtn);
+
+        // Só mostra o botão de excluir se não for um jogo manual
+        if (!jogosManuais.includes(jogo)) {
+          actions.appendChild(deleteBtn);
+        }
+
+        item.appendChild(input);
+        item.appendChild(label);
+        item.appendChild(actions);
+        container.appendChild(item);
+      });
+    }
+
+    // Modal de edição
+    const modal = document.getElementById('editModal');
+    const closeModal = document.getElementById('closeModal');
+    const cancelEdit = document.getElementById('cancelEdit');
+    const saveEdit = document.getElementById('saveEdit');
+    const editExeName = document.getElementById('editExeName');
+    const editFriendlyName = document.getElementById('editFriendlyName');
+
+    let currentEditingGame = null;
+
+    function abrirModalEdicao(exeName) {
+      currentEditingGame = exeName;
+      editExeName.value = exeName;
+      editFriendlyName.value = nomeAmigavel[exeName] || exeName;
+      modal.style.display = 'flex';
+      editFriendlyName.focus();
+    }
+
+    function fecharModal() {
+      modal.style.display = 'none';
+      currentEditingGame = null;
+    }
+
+    closeModal.addEventListener('click', fecharModal);
+    cancelEdit.addEventListener('click', fecharModal);
+
+    saveEdit.addEventListener('click', async () => {
+      if (currentEditingGame) {
+        const novoNome = editFriendlyName.value.trim();
+        if (novoNome) {
+          nomeAmigavel[currentEditingGame] = novoNome;
+          await salvarNomeAmigavel(currentEditingGame, novoNome);
+          await renderizarCheckboxes();
+          fecharModal();
+        }
+      }
+    });
+
+    // Fechar modal ao clicar fora
+    window.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        fecharModal();
+      }
+    });
+
+    // Fechar modal com ESC
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && modal.style.display === 'flex') {
+        fecharModal();
+      }
+    });
+
+    const btnAdicionarJogo = document.getElementById('btnAdicionarJogo');
+    const inputExe = document.getElementById('inputExe');
+    const btnHome = document.getElementById('btnHome');
+    const btndeletor = document.getElementById('btndeletor');
+
+    btnAdicionarJogo.addEventListener('click', () => {
+      inputExe.click();
+    });
+
+    btnHome.addEventListener('click', () => {
+      window.location.href = '/';
+    });
+
+    btndeletor.addEventListener('click', () => {
+      window.location.href = '/deletor.html';
+    });
+
+    inputExe.addEventListener('change', async () => {
+      const file = inputExe.files[0];
+      if (!file) return;
+
+      const nomeExe = file.name;
+
+      let selecionados = await obterSelecionados();
+      if (!selecionados.includes(nomeExe)) {
+        selecionados.push(nomeExe);
+        await salvarSelecionados(selecionados);
+        alert(`Jogo "${nomeExe}" adicionado para monitoramento!`);
+        await renderizarCheckboxes();
+      } else {
+        alert(`Jogo "${nomeExe}" já está na lista.`);
+      }
+
+      inputExe.value = ''; // reset para poder adicionar o mesmo arquivo outra vez
+    });
+
+    // Inicializa
+    renderizarCheckboxes();
+  </script>
+</body>
+
+</html>

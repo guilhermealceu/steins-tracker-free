@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerenciador de Jogos | tracKerGG</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+    :root {
+      --primary: #00ff88;
+      --primary-dark: #00cc6a;
+      --danger: #ff5555;
+      --background: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --text-secondary: #94a3b8;
+      --border-radius: 12px;
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--background);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--primary), #00b7ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-weight: 400;
+      font-size: 1rem;
+      max-width: 600px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .back-btn:hover {
+      color: var(--primary-dark);
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex-grow: 1;
+      position: relative;
+      max-width: 500px;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--card-bg);
+      border: 2px solid #334155;
+      color: var(--text);
+      padding: 0.75rem 1.5rem 0.75rem 3rem;
+      font-size: 1rem;
+      border-radius: var(--border-radius);
+      transition: var(--transition);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+    }
+
+    .btn {
+      background-color: var(--primary);
+      border: none;
+      color: #000;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background-color: #ff3333;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-outline:hover {
+      background: rgba(0, 255, 136, 0.1);
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .game-card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border: 1px solid #334155;
+      transition: var(--transition);
+    }
+
+    .game-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      border-color: var(--primary);
+    }
+
+    .game-card.selected {
+      border-color: var(--primary);
+      background: rgba(0, 255, 136, 0.05);
+    }
+
+    .game-icon {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      border-radius: 12px;
+      flex-shrink: 0;
+    }
+
+    .game-info {
+      flex-grow: 1;
+      overflow: hidden;
+    }
+
+    .game-name {
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .game-path {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #334155;
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked+.slider {
+      background-color: var(--primary);
+    }
+
+    input:checked+.slider:before {
+      transform: translateX(26px);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 0.25rem;
+    }
+
+    .status-active {
+      background-color: rgba(0, 255, 136, 0.2);
+      color: var(--primary);
+    }
+
+    .status-inactive {
+      background-color: rgba(255, 85, 85, 0.2);
+      color: var(--danger);
+    }
+
+    .batch-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+    }
+
+    .select-all {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-secondary);
+      grid-column: 1 / -1;
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: #334155;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .controls {
+        flex-direction: column;
+      }
+
+      .search-box {
+        max-width: 100%;
+      }
+
+      .games-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>tracKerGG</h1>
+      <p class="subtitle">Selecione quais jogos devem aparecer no dashboard principal</p>
+      <a href="index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Voltar ao Dashboard
+      </a>
+    </header>
+
+    <div class="controls">
+      <div class="search-box">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" class="search-input" id="searchInput" placeholder="Buscar jogos...">
+      </div>
+      <button class="btn btn-outline" id="btnRefresh">
+        <i class="fas fa-sync-alt"></i> Atualizar
+      </button>
+    </div>
+
+    <div class="batch-actions">
+      <div class="select-all">
+        <input type="checkbox" id="selectAll">
+        <label for="selectAll">Selecionar todos</label>
+      </div>
+      <div class="action-buttons">
+        <button class="btn btn-outline" id="btnEnableSelected">
+          <i class="fas fa-check-circle"></i> Ativar selecionados
+        </button>
+        <button class="btn btn-outline btn-danger" id="btnDisableSelected">
+          <i class="fas fa-times-circle"></i> Desativar selecionados
+        </button>
+      </div>
+    </div>
+
+    <div class="games-grid" id="gamesGrid">
+      <!-- Jogos serão carregados aqui dinamicamente -->
+      <div class="empty-state">
+        <i class="fas fa-gamepad"></i>
+        <h3>Nenhum jogo encontrado</h3>
+        <p>Execute algum jogo para começar a monitorar</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Substitua todo o conteúdo do <script> por:
+
+    // Elementos DOM
+    const gamesGrid = document.getElementById('gamesGrid');
+    const searchInput = document.getElementById('searchInput');
+    const selectAll = document.getElementById('selectAll');
+    const btnEnableSelected = document.getElementById('btnEnableSelected');
+    const btnDisableSelected = document.getElementById('btnDisableSelected');
+    const btnRefresh = document.getElementById('btnRefresh');
+
+    // Dados dos jogos
+    let allGames = [];
+    let selectedGames = [];
+    let friendlyNames = {};
+
+    // Carrega os jogos selecionados
+    async function loadSelectedGames() {
+      try {
+        const response = await fetch('/api/jogos-selecionados');
+        if (response.ok) {
+          selectedGames = await response.json();
+        }
+      } catch (error) {
+        console.error('Erro ao carregar jogos selecionados:', error);
+      }
+    }
+
+    // Carrega os nomes amigáveis
+    async function loadFriendlyNames() {
+      try {
+        const response = await fetch('/api/nomes-amigaveis');
+        if (response.ok) {
+          friendlyNames = await response.json();
+        }
+      } catch (error) {
+        console.error('Erro ao carregar nomes amigáveis:', error);
+      }
+    }
+
+    // Carrega os logs de jogos
+    async function loadGameLogs() {
+      try {
+        const response = await fetch('/api/logs');
+        if (response.ok) {
+          const logs = await response.json();
+
+          // Extrai jogos únicos
+          const uniqueGames = {};
+          logs.forEach(log => {
+            if (!uniqueGames[log.jogo]) {
+              uniqueGames[log.jogo] = {
+                name: log.jogo,
+                exeName: Object.keys(friendlyNames).find(key => friendlyNames[key] === log.jogo) || log.jogo,
+                lastPlayed: log.inicio ? new Date(log.inicio).toLocaleDateString() : 'Nunca'
+              };
+            }
+          });
+
+          allGames = Object.values(uniqueGames);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar logs:', error);
+      }
+    }
+
+    // Atualiza jogos selecionados
+    async function updateSelectedGames(gameExeName, shouldAdd) {
+      try {
+        let updatedSelection;
+
+        if (shouldAdd) {
+          updatedSelection = [...new Set([...selectedGames, gameExeName])];
+        } else {
+          updatedSelection = selectedGames.filter(name => name !== gameExeName);
+        }
+
+        const response = await fetch('/api/jogos-selecionados', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedSelection)
+        });
+
+        if (response.ok) {
+          selectedGames = updatedSelection;
+        }
+      } catch (error) {
+        console.error('Erro ao atualizar seleção:', error);
+      }
+    }
+
+    // Renderiza a lista de jogos
+    function renderGames(filter = '') {
+      gamesGrid.innerHTML = '';
+
+      const filteredGames = allGames.filter(game =>
+        game.name.toLowerCase().includes(filter.toLowerCase()) ||
+        (game.exeName && game.exeName.toLowerCase().includes(filter.toLowerCase()))
+      );
+
+      if (filteredGames.length === 0) {
+        gamesGrid.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-search"></i>
+        <h3>Nenhum jogo encontrado</h3>
+        <p>Tente ajustar sua busca</p>
+      </div>
+    `;
+        return;
+      }
+
+      filteredGames.forEach(game => {
+        const isSelected = selectedGames.includes(game.exeName);
+
+        const gameCard = document.createElement('div');
+        gameCard.className = `game-card ${isSelected ? 'selected' : ''}`;
+        gameCard.innerHTML = `
+      <img src="${getGameIcon(game.name)}" class="game-icon" alt="${game.name}">
+      <div class="game-info">
+        <div class="game-name" title="${game.name}">${game.name}</div>
+        <div class="game-path" title="${game.exeName}">${game.exeName}</div>
+        <div class="status-badge ${isSelected ? 'status-active' : 'status-inactive'}">
+          ${isSelected ? 'Monitorando' : 'Oculto'}
+        </div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" ${isSelected ? 'checked' : ''} data-exe="${game.exeName}">
+        <span class="slider"></span>
+      </label>
+    `;
+
+        gamesGrid.appendChild(gameCard);
+      });
+    }
+
+    // Obtém ícone do jogo
+    function getGameIcon(gameName) {
+      const gameIcons = {
+        'Fortnite': 'https://static.wikia.nocookie.net/fortnite/images/d/d8/Icon_Founders_BR.png',
+        'Valorant': 'https://preview.redd.it/i-want-to-build-the-valorant-symbol-how-i-can-make-it-work-v0-v2mg78m9nv291.jpg?auto=webp&s=0154565554a6dcb72aed87164feebec1abea9309',
+        'League of Legends': 'https://static.wikia.nocookie.net/leagueoflegends/images/1/12/League_of_Legends_Icon.png',
+        'Minecraft': 'https://static.wikia.nocookie.net/minecraft_gamepedia/images/5/55/Grass_Block_%28texture%29_JE5_BE3.png',
+        'GTA V': 'https://static.wikia.nocookie.net/gtawiki/images/8/8e/GTAV-OfficialGameArt-Logo-White.png',
+        'Counter-Strike 2': 'https://static.wikia.nocookie.net/cswikia/images/1/1e/Cs2_logo.png',
+        'Dota 2': 'https://static.wikia.nocookie.net/dota2_gamepedia/images/7/7f/Dota_2_Logo.png',
+        'Apex Legends': 'https://static.wikia.nocookie.net/apexlegends/images/1/1e/Apex_Legends_icon.png',
+        'Call of Duty: Warzone': 'https://static.wikia.nocookie.net/callofduty/images/5/54/Warzone_icon.png',
+        'Overwatch 2': 'https://static.wikia.nocookie.net/overwatch/images/3/3c/Overwatch_2_logo.png',
+        'Rocket League': 'https://static.wikia.nocookie.net/rocketleague/images/3/3f/Rocket_League_icon.png',
+        'FIFA 23': 'https://static.wikia.nocookie.net/fifa/images/4/4a/FIFA_23_icon.png',
+        'Battlefield 2042': 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/aacf7545-f3cd-48d5-b931-28ce4a28db0e/deyxj7j-aea55371-25b6-4a26-a58f-912801c7e6de.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2FhY2Y3NTQ1LWYzY2QtNDhkNS1iOTMxLTI4Y2U0YTI4ZGIwZVwvZGV5eGo3ai1hZWE1NTM3MS0yNWI2LTRhMjYtYTU4Zi05MTI4MDFjN2U2ZGUucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.fGUCwNcjCzSX-vVAnMsruyUdiZKVAwFzMNq9RmitRYA',
+        'Rainbow Six Siege': 'https://static.wikia.nocookie.net/rainbowsix/images/1/1a/R6S_icon.png',
+        'World of Warcraft': 'https://static.wikia.nocookie.net/wowpedia/images/3/36/WoW_icon.png',
+        'Fall Guys': 'https://static.wikia.nocookie.net/fallguysultimateknockout/images/6/6c/Fall_Guys_icon.png',
+        'Among Us': 'https://static.wikia.nocookie.net/among-us-wiki/images/0/0a/Among_Us_Steam_Icon.png',
+        'Roblox': 'https://static.wikia.nocookie.net/roblox/images/5/5c/Roblox_Logo_2022.png',
+        'The Sims 4': 'https://static.wikia.nocookie.net/sims/images/5/50/The_Sims_4_icon.png',
+        'Cyberpunk 2077': 'https://static.wikia.nocookie.net/cyberpunk/images/7/7d/Cyberpunk_2077_icon.png'
+      };
+
+      return gameIcons[gameName] || 'https://cdn-icons-png.flaticon.com/512/3652/3652191.png';
+    }
+
+    // Event Listeners
+    searchInput.addEventListener('input', (e) => {
+      renderGames(e.target.value);
+    });
+
+    selectAll.addEventListener('change', (e) => {
+      const checkboxes = document.querySelectorAll('.game-card input[type="checkbox"]');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = e.target.checked;
+        const gameExe = checkbox.dataset.exe;
+        updateSelectedGames(gameExe, e.target.checked);
+      });
+
+      renderGames(searchInput.value);
+    });
+
+    gamesGrid.addEventListener('change', (e) => {
+      if (e.target.matches('input[type="checkbox"]')) {
+        const gameCard = e.target.closest('.game-card');
+        const gameExe = e.target.dataset.exe;
+        const isChecked = e.target.checked;
+
+        if (gameCard) {
+          gameCard.classList.toggle('selected', isChecked);
+          updateSelectedGames(gameExe, isChecked);
+
+          const statusBadge = gameCard.querySelector('.status-badge');
+          if (statusBadge) {
+            statusBadge.className = `status-badge ${isChecked ? 'status-active' : 'status-inactive'}`;
+            statusBadge.textContent = isChecked ? 'Monitorando' : 'Oculto';
+          }
+        }
+      }
+    });
+
+    btnEnableSelected.addEventListener('click', () => {
+      const checkboxes = document.querySelectorAll('.game-card input[type="checkbox"]:not(:checked)');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = true;
+        const gameExe = checkbox.dataset.exe;
+        updateSelectedGames(gameExe, true);
+      });
+
+      renderGames(searchInput.value);
+    });
+
+    btnDisableSelected.addEventListener('click', () => {
+      const checkboxes = document.querySelectorAll('.game-card input[type="checkbox"]:checked');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+        const gameExe = checkbox.dataset.exe;
+        updateSelectedGames(gameExe, false);
+      });
+
+      renderGames(searchInput.value);
+    });
+
+    async function limparLogsJogosDesativados() {
+      try {
+        const logs = await (await fetch('/api/logs')).json();
+        const selected = await (await fetch('/api/jogos-selecionados')).json();
+        const friendlyNames = await (await fetch('/api/nomes-amigaveis')).json();
+
+        const logsFiltrados = logs.filter(log => {
+          return selected.includes(log.jogo) ||
+            Object.values(friendlyNames).includes(log.jogo);
+        });
+
+        await fetch('/api/limpar-logs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(logsFiltrados)
+        });
+      } catch (error) {
+        console.error('Erro ao limpar logs:', error);
+      }
+    }
+
+    btnRefresh.addEventListener('click', async () => {
+      await Promise.all([loadSelectedGames(), loadFriendlyNames(), loadGameLogs()]);
+      renderGames();
+    });
+
+    // Inicialização
+    async function init() {
+      await Promise.all([loadSelectedGames(), loadFriendlyNames(), loadGameLogs()]);
+      renderGames();
+    }
+
+    init();
+  </script>
+</body>
+
+</html>
