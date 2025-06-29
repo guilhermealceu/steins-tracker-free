@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tracKerGG</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary: #00ff88;
+            --primary-dark: #00cc6a;
+            --background: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), #00b7ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-weight: 400;
+            font-size: 1rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            border: none;
+            color: #000;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 255, 136, 0.1);
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 255, 136, 0.2);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        select {
+            background-color: var(--card-bg);
+            border: 2px solid #334155;
+            color: var(--text);
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            min-width: 180px;
+        }
+
+        select:hover {
+            border-color: var(--primary);
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.3);
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            border: 1px solid #334155;
+            text-align: center;
+        }
+
+        .summary-card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 0.5rem 0;
+        }
+
+        .summary-card-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .game-list {
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+
+        .game-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .game-table th,
+        .game-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+
+        .game-table th {
+            background-color: #1a2539;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .game-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .game-table tr:hover {
+            background-color: #2a374b;
+        }
+
+        .game-icon {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            border-radius: 50%;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .game-name {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: #334155;
+            border-radius: 10px;
+            height: 10px;
+            margin-top: 0.5rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 10px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .game-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            border: 1px solid #334155;
+        }
+
+        .game-card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .game-card-icon {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 50%;
+            margin-right: 1rem;
+        }
+
+        .game-card-title {
+            font-weight: 600;
+        }
+
+        .game-card-stats {
+            margin-top: 1rem;
+        }
+
+        .game-stat {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .game-stat-label {
+            color: var(--text-secondary);
+        }
+
+        .game-stat-value {
+            font-weight: 500;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+            border: 1px solid #334155;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-wide {
+            grid-column: 1 / -1;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 300px !important;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .game-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>tracKerGG</h1>
+            <p class="subtitle">Visualize suas estatísticas de jogo</p>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="window.location.href='/seletor-de-jogos.html'">
+                <i class="fas fa-gamepad"></i> Selecionar Jogos
+            </button>
+            <select id="periodo" aria-label="Filtrar período" title="Filtrar período">
+                <option value="todos">Todos os registros</option>
+                <option value="30">Últimos 30 dias</option>
+                <option value="7">Últimos 7 dias</option>
+            </select>
+            <button class="btn btn-outline" id="btnExportar">
+                <i class="fas fa-file-export"></i> Exportar CSV
+            </button>
+        </div>
+
+        <!-- Lista de Jogos -->
+        <div class="game-list">
+            <h2 style="margin-bottom: 1rem; color: var(--primary);">Seus Jogos</h2>
+            <table class="game-table" id="tabelaJogos">
+                <thead>
+                    <tr>
+                        <th>Jogo</th>
+                        <th>Tempo Jogado</th>
+                        <th>Última Vez</th>
+                        <th>Sessões</th>
+                    </tr>
+                </thead>
+                <tbody id="corpoTabelaJogos">
+                    <!-- Preenchido dinamicamente -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Cards de Resumo -->
+        <div class="summary-cards">
+            <div class="summary-card">
+                <div class="summary-card-label">Tempo Total</div>
+                <div class="summary-card-value" id="totalTempo">0h 0min</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-card-label">Jogos Monitorados</div>
+                <div class="summary-card-value" id="totalJogos">0</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-card-label">Média Diária</div>
+                <div class="summary-card-value" id="mediaDiaria">0h 0min</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-card-label">Meta Diária (2h)</div>
+                <div class="summary-card-value" id="metaStatus">0%</div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="metaProgresso" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráfico de Evolução Diária -->
+        <div class="card card-wide">
+            <div class="card-header">
+                <i class="fas fa-chart-line"></i> Evolução Diária
+            </div>
+            <canvas id="graficoLinha"></canvas>
+        </div>
+
+        <!-- Cards Individuais de Jogos -->
+        <h2 style="margin-top: 2rem; color: var(--primary);">Estatísticas por Jogo</h2>
+        <div class="game-cards" id="cardsJogos">
+            <!-- Preenchido dinamicamente -->
+        </div>
+    </div>
+
+    <script>
+        let graficoLinha;
+
+        // Mapeamento de ícones para jogos populares
+        const gameIcons = {
+            'Fortnite': 'https://static.wikia.nocookie.net/fortnite/images/d/d8/Icon_Founders_BR.png',
+            'Valorant': 'https://preview.redd.it/i-want-to-build-the-valorant-symbol-how-i-can-make-it-work-v0-v2mg78m9nv291.jpg?auto=webp&s=0154565554a6dcb72aed87164feebec1abea9309',
+            'League of Legends': 'https://cdn2.steamgriddb.com/icon/882137f311c5728f8e257e56820af92c.png',
+            'Minecraft': 'https://images.icon-icons.com/2699/PNG/512/minecraft_logo_icon_168974.png',
+            'GTA V': 'https://img.icons8.com/fluent/512/gta-5.png',
+            'Counter-Strike 2': 'https://cdn2.steamgriddb.com/icon/e1bd06c3f8089e7552aa0552cb387c92/32/512x512.png',
+            'Dota 2': 'https://img.icons8.com/fluent/512/dota.png',
+            'Apex Legends': 'https://static.wikia.nocookie.net/apexlegends/images/1/1e/Apex_Legends_icon.png',
+            'Call of Duty: Warzone': 'https://static.wikia.nocookie.net/callofduty/images/5/54/Warzone_icon.png',
+            'Overwatch 2': 'https://static.wikia.nocookie.net/overwatch/images/3/3c/Overwatch_2_logo.png',
+            'Rocket League': 'https://static.wikia.nocookie.net/rocketleague/images/3/3f/Rocket_League_icon.png',
+            'FIFA 23': 'https://static.wikia.nocookie.net/fifa/images/4/4a/FIFA_23_icon.png',
+            'Battlefield 2042': 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/aacf7545-f3cd-48d5-b931-28ce4a28db0e/deyxj7j-aea55371-25b6-4a26-a58f-912801c7e6de.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2FhY2Y3NTQ1LWYzY2QtNDhkNS1iOTMxLTI4Y2U0YTI4ZGIwZVwvZGV5eGo3ai1hZWE1NTM3MS0yNWI2LTRhMjYtYTU4Zi05MTI4MDFjN2U2ZGUucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.fGUCwNcjCzSX-vVAnMsruyUdiZKVAwFzMNq9RmitRYA',
+            'Rainbow Six Siege': 'https://static.wikia.nocookie.net/rainbowsix/images/1/1a/R6S_icon.png',
+            'World of Warcraft': 'https://static.wikia.nocookie.net/wowpedia/images/3/36/WoW_icon.png',
+            'Fall Guys': 'https://static.wikia.nocookie.net/fallguysultimateknockout/images/6/6c/Fall_Guys_icon.png',
+            'Among Us': 'https://static.wikia.nocookie.net/among-us-wiki/images/0/0a/Among_Us_Steam_Icon.png',
+            'Roblox': 'https://static.wikia.nocookie.net/roblox/images/5/5c/Roblox_Logo_2022.png',
+            'The Sims 4': 'https://static.wikia.nocookie.net/sims/images/5/50/The_Sims_4_icon.png',
+            'Black Desert': 'https://cdn6.aptoide.com/imgs/6/c/c/6cc0a9584df1f6c122471edfc72d8022_icon.png',
+            'Cyberpunk 2077': 'https://static.wikia.nocookie.net/cyberpunk/images/7/7d/Cyberpunk_2077_icon.png'
+        };
+
+        // Função para obter o ícone do jogo
+        function getGameIcon(gameName) {
+            return gameIcons[gameName] || 'https://cdn-icons-png.flaticon.com/512/3652/3652191.png';
+        }
+
+        // Função para formatar data
+        function formatarData(data) {
+            const dt = new Date(data);
+            return dt.toLocaleDateString('pt-BR');
+        }
+
+        // Função para formatar tempo
+        function formatarTempo(minutos) {
+            if (minutos < 60) return `${minutos} min`;
+            const horas = Math.floor(minutos / 60);
+            const mins = minutos % 60;
+            return `${horas}h ${mins}min`;
+        }
+
+        // Função para calcular dias entre datas
+        function diasEntreDatas(dataInicial, dataFinal) {
+            const diff = new Date(dataFinal) - new Date(dataInicial);
+            return Math.ceil(diff / (1000 * 60 * 60 * 24)) || 1;
+        }
+
+        async function carregarLogs() {
+            try {
+                // Carrega os logs E os jogos selecionados
+                const [logsRes, selectedRes] = await Promise.all([
+                    fetch('/api/logs'),
+                    fetch('/api/jogos-selecionados')
+                ]);
+
+                if (!logsRes.ok || !selectedRes.ok) return [];
+
+                const [logs, selected] = await Promise.all([
+                    logsRes.json(),
+                    selectedRes.json()
+                ]);
+
+                // Filtra logs para incluir apenas jogos selecionados
+                const friendlyNames = await (await fetch('/api/nomes-amigaveis')).json();
+                const selectedNames = new Set([
+                    ...selected,
+                    ...Object.keys(friendlyNames).filter(exe => selected.includes(exe))
+                ]);
+
+                return logs.filter(log => {
+                    // Verifica se o log.jogo é um nome amigável de um jogo selecionado
+                    return Object.entries(friendlyNames).some(
+                        ([exe, name]) => selected.includes(exe) && name === log.jogo
+                    ) || selected.includes(log.jogo); // Ou é um nome de executável selecionado
+                });
+            } catch (error) {
+                console.error('Erro ao carregar logs:', error);
+                return [];
+            }
+        }
+
+        function filtrarPorPeriodo(logs, dias) {
+            if (dias === 'todos') return logs;
+            const agora = new Date();
+            const limite = new Date(agora.getTime() - dias * 24 * 60 * 60 * 1000);
+            return logs.filter(log => new Date(log.inicio) >= limite);
+        }
+
+        function agruparTempoPorJogo(logs) {
+            const mapa = {};
+            const contagemSessoes = {};
+            const ultimaVez = {};
+
+            logs.forEach(log => {
+                if (!mapa[log.jogo]) {
+                    mapa[log.jogo] = 0;
+                    contagemSessoes[log.jogo] = 0;
+                    ultimaVez[log.jogo] = new Date(0);
+                }
+
+                mapa[log.jogo] += log.tempoTotalMin;
+                contagemSessoes[log.jogo] += 1;
+
+                const dataLog = new Date(log.inicio);
+                if (dataLog > ultimaVez[log.jogo]) {
+                    ultimaVez[log.jogo] = dataLog;
+                }
+            });
+
+            return { tempo: mapa, sessoes: contagemSessoes, ultimaVez: ultimaVez };
+        }
+
+        function formatarDataISO(d) {
+            const date = new Date(d);
+            return date.toISOString().slice(0, 10);
+        }
+
+        function agruparPorDia(logs) {
+            const mapa = {};
+            logs.forEach(log => {
+                const data = formatarDataISO(log.inicio);
+                if (!mapa[data]) mapa[data] = {};
+                if (!mapa[data][log.jogo]) mapa[data][log.jogo] = 0;
+                mapa[data][log.jogo] += log.tempoTotalMin;
+            });
+            return mapa;
+        }
+
+        function criarDatasContinuas(mapa, dias) {
+            const datas = [];
+            const hoje = new Date();
+            for (let i = dias - 1; i >= 0; i--) {
+                const dt = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() - i);
+                datas.push(formatarDataISO(dt));
+            }
+            return datas;
+        }
+
+        function prepararDadosLinha(mapa, jogos, datas) {
+            const datasets = jogos.map((jogo, i) => {
+                return {
+                    label: jogo,
+                    data: datas.map(d => mapa[d]?.[jogo] || 0),
+                    borderColor: `hsl(${(i * 360 / jogos.length)}, 80%, 60%)`,
+                    backgroundColor: `hsla(${(i * 360 / jogos.length)}, 80%, 60%, 0.2)`,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 3,
+                    pointHoverRadius: 6,
+                    borderWidth: 2,
+                    pointBackgroundColor: `hsl(${(i * 360 / jogos.length)}, 80%, 60%)`
+                };
+            });
+            return datasets;
+        }
+
+        function atualizarResumo(totalMinutos, totalJogos, logs, periodo) {
+            document.getElementById('totalTempo').textContent = formatarTempo(totalMinutos);
+            document.getElementById('totalJogos').textContent = totalJogos;
+
+            // Calcular média diária
+            let dias = periodo === 'todos' ?
+                diasEntreDatas(logs[0]?.inicio, logs[logs.length - 1]?.fim) :
+                parseInt(periodo);
+
+            const mediaDiaria = totalMinutos / (dias || 1);
+            document.getElementById('mediaDiaria').textContent = formatarTempo(mediaDiaria);
+
+            // Calcular meta (2h = 120min)
+            const percentualMeta = Math.min(Math.round((mediaDiaria / 120) * 100), 100);
+            document.getElementById('metaStatus').textContent = `${percentualMeta}%`;
+            document.getElementById('metaProgresso').style.width = `${percentualMeta}%`;
+
+            // Mudar cor da barra de progresso conforme o percentual
+            const progressBar = document.getElementById('metaProgresso');
+            if (percentualMeta > 100) {
+                progressBar.style.backgroundColor = '#ff5555';
+            } else if (percentualMeta > 80) {
+                progressBar.style.backgroundColor = '#00ff88';
+            } else if (percentualMeta > 50) {
+                progressBar.style.backgroundColor = '#ffcc00';
+            } else {
+                progressBar.style.backgroundColor = '#ff5555';
+            }
+        }
+
+        function atualizarListaJogos(dadosAgrupados) {
+            const corpoTabela = document.getElementById('corpoTabelaJogos');
+            corpoTabela.innerHTML = '';
+
+            const jogosOrdenados = Object.keys(dadosAgrupados.tempo).sort((a, b) =>
+                dadosAgrupados.tempo[b] - dadosAgrupados.tempo[a]
+            );
+
+            jogosOrdenados.forEach(jogo => {
+                const linha = document.createElement('tr');
+
+                const tempoFormatado = formatarTempo(dadosAgrupados.tempo[jogo]);
+                const ultimaVezFormatada = dadosAgrupados.ultimaVez[jogo] ?
+                    formatarData(dadosAgrupados.ultimaVez[jogo]) : 'Nunca';
+
+                linha.innerHTML = `
+          <td>
+            <div class="game-name">
+              <img src="${getGameIcon(jogo)}" class="game-icon" alt="${jogo}">
+              ${jogo}
+            </div>
+          </td>
+          <td>${tempoFormatado}</td>
+          <td>${ultimaVezFormatada}</td>
+          <td>${dadosAgrupados.sessoes[jogo]}</td>
+        `;
+
+                corpoTabela.appendChild(linha);
+            });
+        }
+
+        function atualizarCardsJogos(dadosAgrupados) {
+            const container = document.getElementById('cardsJogos');
+            container.innerHTML = '';
+
+            const jogosOrdenados = Object.keys(dadosAgrupados.tempo).sort((a, b) =>
+                dadosAgrupados.tempo[b] - dadosAgrupados.tempo[a]
+            );
+
+            jogosOrdenados.forEach(jogo => {
+                const card = document.createElement('div');
+                card.className = 'game-card';
+
+                const tempoTotal = dadosAgrupados.tempo[jogo];
+                const sessoes = dadosAgrupados.sessoes[jogo];
+                const ultimaVez = dadosAgrupados.ultimaVez[jogo];
+                const mediaPorSessao = tempoTotal / sessoes;
+
+                card.innerHTML = `
+          <div class="game-card-header">
+            <img src="${getGameIcon(jogo)}" class="game-card-icon" alt="${jogo}">
+            <div class="game-card-title">${jogo}</div>
+          </div>
+          <div class="game-card-stats">
+            <div class="game-stat">
+              <span class="game-stat-label">Tempo Total:</span>
+              <span class="game-stat-value">${formatarTempo(tempoTotal)}</span>
+            </div>
+            <div class="game-stat">
+              <span class="game-stat-label">Sessões:</span>
+              <span class="game-stat-value">${sessoes}</span>
+            </div>
+            <div class="game-stat">
+              <span class="game-stat-label">Média/Sessão:</span>
+              <span class="game-stat-value">${formatarTempo(mediaPorSessao)}</span>
+            </div>
+            <div class="game-stat">
+              <span class="game-stat-label">Última vez:</span>
+              <span class="game-stat-value">${ultimaVez ? formatarData(ultimaVez) : 'Nunca'}</span>
+            </div>
+          </div>
+        `;
+
+                container.appendChild(card);
+            });
+        }
+
+        async function gerarGraficos() {
+            const periodoSelect = document.getElementById('periodo');
+            const periodo = periodoSelect.value;
+
+            let logs = await carregarLogs();
+            logs = filtrarPorPeriodo(logs, periodo);
+
+            // Dados para barra e pizza
+            const dadosAgrupados = agruparTempoPorJogo(logs);
+            const jogos = Object.keys(dadosAgrupados.tempo);
+            const tempos = Object.values(dadosAgrupados.tempo);
+
+            const totalMinutos = tempos.reduce((a, b) => a + b, 0);
+            atualizarResumo(totalMinutos, jogos.length, logs, periodo);
+            atualizarListaJogos(dadosAgrupados);
+            atualizarCardsJogos(dadosAgrupados);
+
+            // Gráfico de linha - evolução diária
+            const mapaDias = agruparPorDia(logs);
+            const datas = periodo === 'todos' ?
+                Object.keys(mapaDias).sort() :
+                criarDatasContinuas(parseInt(periodo), parseInt(periodo));
+            const datasUltimosDias = periodo === 'todos' ?
+                Object.keys(mapaDias).sort() :
+                criarDatasContinuas(parseInt(periodo));
+
+            const datasetsLinha = prepararDadosLinha(mapaDias, jogos, datasUltimosDias);
+
+            const ctxLinha = document.getElementById('graficoLinha').getContext('2d');
+            if (graficoLinha) graficoLinha.destroy();
+            graficoLinha = new Chart(ctxLinha, {
+                type: 'line',
+                data: {
+                    labels: datasUltimosDias,
+                    datasets: datasetsLinha
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#f8fafc',
+                                font: {
+                                    size: 12
+                                },
+                                usePointStyle: true,
+                                pointStyle: 'circle',
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            mode: 'nearest',
+                            intersect: false,
+                            callbacks: {
+                                label: ctx => `${ctx.dataset.label}: ${formatarTempo(ctx.parsed.y)}`,
+                                title: (items) => {
+                                    return items[0].label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Minutos jogados', color: '#94a3b8' },
+                            grid: { color: '#334155' },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Data', color: '#94a3b8' },
+                            grid: { color: '#334155' },
+                            ticks: { color: '#94a3b8' }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+
+        function exportarCSV() {
+            carregarLogs().then(logs => {
+                if (!logs.length) {
+                    alert('Sem dados para exportar');
+                    return;
+                }
+
+                const linhas = [
+                    ['Jogo', 'Início', 'Fim', 'Duração (min)']
+                ];
+
+                logs.forEach(log => {
+                    linhas.push([
+                        `"${log.jogo}"`,
+                        `"${new Date(log.inicio).toLocaleString()}"`,
+                        `"${new Date(log.fim).toLocaleString()}"`,
+                        log.tempoTotalMin
+                    ]);
+                });
+
+                const csvContent = linhas.map(e => e.join(';')).join('\n');
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'status_gamer_logs.csv';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        }
+
+        document.getElementById('periodo').addEventListener('change', gerarGraficos);
+        document.getElementById('btnExportar').addEventListener('click', exportarCSV);
+
+        window.onload = gerarGraficos;
+    </script>
+</body>
+
+</html>
