@@ -1,10 +1,10 @@
-# 🎮 tracKerGG
+# tracKerGG
 
 **tracKerGG** é uma ferramenta de monitoramento local que registra o tempo de jogo em seu PC de forma automática e visual, através de gráficos interativos. Ideal para jogadores que desejam acompanhar sua rotina gamer ou até mesmo pais que queiram visualizar o tempo de uso.
 
 ---
 
-## 🧠 Funcionalidades
+## Funcionalidades
 
 - ⏱️ **Monitoramento automático** dos jogos em execução
 - 📁 Suporte a jogos da **Steam, Epic, Origin ou instalação manual**
@@ -15,23 +15,28 @@
 
 ---
 
-## 🖼️ Interface
+## Interface
 
 ### 📍 Página principal – Dashboard de Jogos
 > Exibe tempo total jogado por título
 
 ![Dashboard](https://github.com/guilhermealceu/tracKerGG/blob/main/public/imgs/Dashboard.png?raw=true)
 
-### 🎯 Seletor de Jogos
+### Seletor de Jogos
 > Escolha os jogos que você quer monitorar
 
 ![Seletor de Jogos](https://github.com/guilhermealceu/tracKerGG/blob/main/public/imgs/Seletor%20de%20Jogos.png?raw=true)
 
 > 📝 Você também pode adicionar jogos manualmente usando o botão "➕ Adicionar jogo via EXE".
 
+### Deletor
+> Escolha os jogos que você quer visivelmente mostrar no dashboard!
+
+![Seletor de Jogos](https://github.com/guilhermealceu/tracKerGG/blob/main/public/imgs/Deletor.png?raw=true)
+
 ---
 
-## 🛠️ Como executar
+## Como executar
 
 ```bash
 git clone https://github.com/seu-usuario/tracKerGG.git
