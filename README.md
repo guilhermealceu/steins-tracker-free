@@ -1,6 +1,6 @@
-# tracKerGG
+# Steins;Tracker
 
-**tracKerGG** é uma ferramenta de monitoramento local que registra o tempo de jogo em seu PC de forma automática e visual, através de gráficos interativos. Ideal para jogadores que desejam acompanhar sua rotina gamer ou até mesmo pais que queiram visualizar o tempo de uso.
+**Steins;Tracker** é uma ferramenta de monitoramento local que registra o tempo de jogo em seu PC de forma automática e visual, através de gráficos interativos. Ideal para jogadores que desejam acompanhar sua rotina gamer ou até mesmo pais que queiram visualizar o tempo de uso.
 
 ---
 
