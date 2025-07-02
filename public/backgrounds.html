@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/391/391217.png">
+    <title>Gerenciador de Wallpapers | Steins;Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/background.css">
+    <script type="module" src="assets/js/background.js" defer></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary: #00ff88;
+            --primary-dark: #00cc6a;
+            --primary-light: rgba(0, 255, 136, 0.1);
+            --danger: #ff5555;
+            --danger-light: rgba(255, 85, 85, 0.1);
+            --background: #0f172a;
+            --card-bg: #1e293b;
+            --card-hover: #2d3b54;
+            --text: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-radius: 12px;
+            --border-radius-sm: 8px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary), #00b7ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-weight: 400;
+            font-size: 1rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .back-btn:hover {
+            color: var(--primary-dark);
+        }
+
+        .wallpaper-form {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="url"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #334155;
+            border-radius: var(--border-radius-sm);
+            background: var(--background);
+            color: var(--text);
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        input[type="text"]:focus,
+        input[type="url"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.2);
+        }
+
+        .btn {
+            background-color: var(--primary);
+            border: none;
+            color: #121212;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #ff3333;
+        }
+
+        .wallpapers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .wallpaper-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid #334155;
+        }
+
+        .wallpaper-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .wallpaper-card.current {
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.2);
+        }
+
+        .wallpaper-preview {
+            height: 160px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .wallpaper-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            display: flex;
+            align-items: flex-end;
+            padding: 1rem;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .wallpaper-card:hover .wallpaper-overlay {
+            opacity: 1;
+        }
+
+        .wallpaper-info {
+            padding: 1rem;
+        }
+
+        .wallpaper-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .wallpaper-author {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .wallpaper-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border-radius: var(--border-radius-sm);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .set-btn {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .set-btn:hover {
+            background: var(--primary);
+            color: #121212;
+        }
+
+        .remove-btn {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .remove-btn:hover {
+            background: var(--danger);
+            color: white;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            color: var(--text);
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-hover);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.error {
+            border-left-color: var(--danger);
+        }
+
+        .toast-icon {
+            font-size: 1.2rem;
+        }
+
+        .toast .toast-icon {
+            color: var(--primary);
+        }
+
+        .toast.error .toast-icon {
+            color: var(--danger);
+        }
+
+        /* SCROLLBAR PERSONALIZADA */
+        ::-webkit-scrollbar {
+            width: 10px;
+            /* Largura da scrollbar vertical */
+            height: 10px;
+            /* Altura da scrollbar horizontal */
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+            /* Cor do track (fundo) - combinando com --card-bg */
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #00cc6a;
+            /* Cor do thumb (alça) - combinando com --primary-dark */
+            border-radius: 5px;
+            border: 2px solid #1e293b;
+            /* Borda para contraste */
+            transition: all 0.3s ease;
+            /* Transição suave */
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00ff88;
+            /* Cor ao passar o mouse - combinando com --primary */
+            cursor: grab;
+            /* Cursor indicando que pode arrastar */
+        }
+
+        ::-webkit-scrollbar-thumb:active {
+            background: #00a05c;
+            /* Cor quando clicado */
+            cursor: grabbing;
+            /* Cursor de arrastando */
+        }
+
+        /* Para Firefox */
+        html {
+            scrollbar-width: thin;
+            /* "auto" ou "thin" */
+            scrollbar-color: #00cc6a #1e293b;
+            /* thumb e track */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Gerenciador de Wallpapers</h1>
+            <p class="subtitle">Adicione, remova e gerencie seus planos de fundo</p>
+            <a href="index.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Voltar ao Dashboard
+            </a>
+        </header>
+        
+        <div class="wallpaper-form">
+            <h2 style="margin-bottom: 1rem; color: var(--primary);">Adicionar Novo Wallpaper</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="wallpaper-name">Nome do Wallpaper</label>
+                    <input type="text" id="wallpaper-name" placeholder="Ex: Cidade Futurista">
+                </div>
+                <div class="form-group">
+                    <label for="wallpaper-author">Autor (opcional)</label>
+                    <input type="text" id="wallpaper-author" placeholder="Ex: Artista Digital">
+                </div>
+                <div class="form-group">
+                    <label for="wallpaper-url">URL da Imagem</label>
+                    <input type="url" id="wallpaper-url" placeholder="https://exemplo.com/imagem.jpg">
+                </div>
+                <div class="form-group" style="align-self: flex-end;">
+                    <button class="btn" id="add-wallpaper">
+                        <i class="fas fa-plus"></i> Adicionar Wallpaper
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <h2 style="margin-bottom: 1rem; color: var(--primary);">Seus Wallpapers</h2>
+        <div class="wallpapers-grid" id="wallpapers-grid">
+            <!-- Wallpapers serão carregados aqui -->
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast">
+        <div class="toast-icon"></div>
+        <div class="toast-message"></div>
+    </div>
+
+    <script>
+        // Elementos DOM
+        const wallpapersGrid = document.getElementById('wallpapers-grid');
+        const addWallpaperBtn = document.getElementById('add-wallpaper');
+        const toast = document.getElementById('toast');
+
+        // Dados
+        let wallpapers = [];
+        let currentWallpaperIndex = 0;
+
+        // Mostrar notificação
+        function showToast(message, type = 'success', duration = 3000) {
+            const toastIcon = toast.querySelector('.toast-icon');
+            const toastMessage = toast.querySelector('.toast-message');
+
+            toast.className = `toast ${type}`;
+            toastMessage.textContent = message;
+
+            if (type === 'success') {
+                toastIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+            } else {
+                toastIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+            }
+
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        // Carregar wallpapers do JSON
+        async function loadWallpapers() {
+            try {
+                const response = await fetch('data/background.json');
+                if (!response.ok) throw new Error('Erro ao carregar wallpapers');
+
+                const data = await response.json();
+                wallpapers = data.backgrounds || [];
+                currentWallpaperIndex = data.current || 0;
+
+                renderWallpapers();
+            } catch (error) {
+                console.error('Erro:', error);
+                showToast('Erro ao carregar wallpapers', 'error');
+            }
+        }
+
+        // Salvar wallpapers no JSON
+        async function saveWallpapers() {
+            try {
+                const response = await fetch('/api/save-wallpapers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        backgrounds: wallpapers,
+                        current: currentWallpaperIndex
+                    })
+                });
+
+                if (!response.ok) throw new Error('Erro ao salvar');
+
+                showToast('Wallpapers salvos com sucesso!');
+            } catch (error) {
+                console.error('Erro:', error);
+                showToast('Erro ao salvar wallpapers', 'error');
+            }
+        }
+
+        // Renderizar wallpapers na tela
+        function renderWallpapers() {
+            wallpapersGrid.innerHTML = '';
+
+            if (wallpapers.length === 0) {
+                wallpapersGrid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-secondary);">
+                        <i class="fas fa-image" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <p>Nenhum wallpaper adicionado ainda</p>
+                    </div>
+                `;
+                return;
+            }
+
+            wallpapers.forEach((wallpaper, index) => {
+                const wallpaperCard = document.createElement('div');
+                wallpaperCard.className = `wallpaper-card ${index === currentWallpaperIndex ? 'current' : ''}`;
+
+                wallpaperCard.innerHTML = `
+                    <div class="wallpaper-preview" style="background-image: url('${wallpaper.image}')">
+                        <div class="wallpaper-overlay">
+                            <div>
+                                <div class="wallpaper-name">${wallpaper.name}</div>
+                                ${wallpaper.author ? `<div class="wallpaper-author">por ${wallpaper.author}</div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wallpaper-info">
+                        <div class="wallpaper-actions">
+                            <button class="action-btn set-btn" data-index="${index}">
+                                <i class="fas fa-check"></i> Usar
+                            </button>
+                            <button class="action-btn remove-btn" data-index="${index}">
+                                <i class="fas fa-trash"></i> Remover
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                wallpapersGrid.appendChild(wallpaperCard);
+            });
+
+            // Adicionar event listeners
+            document.querySelectorAll('.set-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    setCurrentWallpaper(parseInt(this.dataset.index));
+                });
+            });
+
+            document.querySelectorAll('.remove-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    removeWallpaper(parseInt(this.dataset.index));
+                });
+            });
+        }
+
+        // Definir wallpaper atual
+        async function setCurrentWallpaper(index) {
+            currentWallpaperIndex = index;
+            await saveWallpapers();
+            renderWallpapers();
+            showToast(`Wallpaper "${wallpapers[index].name}" definido como atual`);
+        }
+
+        // Remover wallpaper
+        async function removeWallpaper(index) {
+            if (confirm(`Tem certeza que deseja remover "${wallpapers[index].name}"?`)) {
+                // Ajusta o índice atual se estiver removendo o wallpaper atual
+                if (index === currentWallpaperIndex) {
+                    currentWallpaperIndex = 0;
+                } else if (index < currentWallpaperIndex) {
+                    currentWallpaperIndex--;
+                }
+
+                wallpapers.splice(index, 1);
+                await saveWallpapers();
+                renderWallpapers();
+                showToast('Wallpaper removido com sucesso');
+            }
+        }
+
+        // Adicionar novo wallpaper
+        addWallpaperBtn.addEventListener('click', async function () {
+            const name = document.getElementById('wallpaper-name').value.trim();
+            const author = document.getElementById('wallpaper-author').value.trim();
+            const url = document.getElementById('wallpaper-url').value.trim();
+
+            if (!name || !url) {
+                showToast('Nome e URL são obrigatórios', 'error');
+                return;
+            }
+
+            if (!isValidUrl(url)) {
+                showToast('URL da imagem inválida', 'error');
+                return;
+            }
+
+            const newWallpaper = {
+                name,
+                image: url,
+                author: author || 'Desconhecido'
+            };
+
+            wallpapers.push(newWallpaper);
+            await saveWallpapers();
+            renderWallpapers();
+
+            // Limpar formulário
+            document.getElementById('wallpaper-name').value = '';
+            document.getElementById('wallpaper-author').value = '';
+            document.getElementById('wallpaper-url').value = '';
+
+            showToast('Wallpaper adicionado com sucesso!');
+        });
+
+        // Validar URL
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', loadWallpapers);
+    </script>
+</body>
+
+</html>
