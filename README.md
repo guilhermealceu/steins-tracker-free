@@ -114,6 +114,6 @@ http://localhost:3000
 
 ---
 
-## 🧑‍💻 Autor
+## ❗ATENÇÃO
 
 Todos os prints e dados foram aleatorizados com jogos, horas e outros para gerar dashboards para você ver como é, caso queira começar do zero remova os dados dos jsons no data, nos logs, icones, backgrounds etc.
