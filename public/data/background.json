@@ -1,0 +1,45 @@
+{
+  "backgrounds": [
+    {
+      "name": "Valorant",
+      "image": "https://images8.alphacoders.com/107/1074587.jpg",
+      "author": "images8"
+    },
+    {
+      "name": "Blackdesert",
+      "image": "https://wallpapers.com/images/hd/raven-black-desert-online-pcubyraibzep00e6.jpg",
+      "author": "wallpapers.com"
+    },
+    {
+      "name": "Call of Duty: Warzone",
+      "image": "https://blz-contentstack-images.akamaized.net/v3/assets/bltf408a0557f4e4998/blt476e411d696dfb08/67e603a1d66ebd1287f688e5/BO6_S3_WZ_X1-Garrison-App-1920x1080.png?imwidth=1920&imdensity=2.625",
+      "author": "Battle.net"
+    },
+    {
+      "name": "Stellar Blade",
+      "image": "https://images5.alphacoders.com/136/1361086.jpeg",
+      "author": "images5"
+    },
+    {
+      "name": "Minecraft",
+      "image": "https://c4.wallpaperflare.com/wallpaper/948/782/354/minecraft-minecraft-dungeons-ocean-view-minecraft-dungeons-hidden-depths-4k-hd-wallpaper-preview.jpg",
+      "author": "c4.wallpaperflare.com"
+    },
+    {
+      "name": "Geometric",
+      "image": "https://wallpapercat.com/w/full/1/d/6/1195234-3840x2160-desktop-4k-geometric-abstract-background-photo.jpg",
+      "author": "wallpapercat"
+    },
+    {
+      "name": "Wallpaper",
+      "image": "https://images.alphacoders.com/132/1320395.png",
+      "author": "Desconhecido"
+    },
+    {
+      "name": "SteinsGate",
+      "image": "https://cdna.artstation.com/p/assets/images/images/050/568/422/large/asophxs-img-20220613-180744.jpg?1655161897",
+      "author": "Desconhecido"
+    }
+  ],
+  "current": 6
+}
