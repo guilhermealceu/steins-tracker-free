@@ -4,9 +4,16 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>tracKerGG</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/12082/12082876.png">
+    <title>Steins;Tracker</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/background.css">
+    <script type="module" src="assets/js/background.js" defer></script>
+    <link rel="stylesheet" href="assets/css/music-player.css">
+    <script src="assets/js/music-player.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
@@ -14,7 +21,7 @@
             --primary: #00ff88;
             --primary-dark: #00cc6a;
             --background: #0f172a;
-            --card-bg: #1e293b;
+            --card-bg: #1e293be9;
             --text: #f8fafc;
             --text-secondary: #94a3b8;
             --border-radius: 12px;
@@ -32,7 +39,8 @@
             background: var(--background);
             color: var(--text);
             min-height: 100vh;
-            padding: 2rem;
+            padding: 6rem;
+            margin-top: -20px;
         }
 
         .container {
@@ -43,6 +51,8 @@
         .dashboard-header {
             text-align: center;
             margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
         }
 
         h1 {
@@ -67,6 +77,9 @@
             margin-bottom: 2rem;
             flex-wrap: wrap;
             justify-content: center;
+            background-color: #1e293b91;
+            backdrop-filter: blur(10px);
+            border-radius: var(--border-radius);
         }
 
         .btn {
@@ -133,6 +146,7 @@
 
         .summary-card {
             background: var(--card-bg);
+            backdrop-filter: blur(10px);
             padding: 1.5rem;
             border-radius: var(--border-radius);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
@@ -164,6 +178,7 @@
             border-radius: var(--border-radius);
             overflow: hidden;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
         }
 
         .game-table th,
@@ -229,6 +244,7 @@
             border-radius: var(--border-radius);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
             border: 1px solid #334155;
+            backdrop-filter: blur(10px);
         }
 
         .game-card-header {
@@ -270,6 +286,17 @@
 
         .card {
             background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+            border: 1px solid #334155;
+        }
+
+        .card2 {
+            background: #1e293b3d;
+            backdrop-filter: blur(10px);
             padding: 1.5rem;
             border-radius: var(--border-radius);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
@@ -320,128 +347,452 @@
                 overflow-x: auto;
             }
         }
+
+        /* Heatmap Styles */
+        #heatmap-container {
+            padding: 1rem;
+            font-size: 0.85rem;
+            overflow-x: auto;
+        }
+
+        .heatmap-header {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .heatmap-grid {
+            display: flex;
+            gap: 4px;
+        }
+
+        .heatmap-days {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-right: 8px;
+            color: var(--text-secondary);
+            justify-content: space-between;
+            padding-top: 22px;
+            font-size: 0.8rem;
+        }
+
+        #heatmap-cells {
+            display: grid;
+            grid-template-columns: repeat(53, 1fr);
+            grid-auto-rows: 16px;
+            gap: 4px;
+            min-width: 900px;
+        }
+
+        .heatmap-cell {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .heatmap-cell:hover {
+            transform: scale(1.3);
+            box-shadow: 0 0 0 2px var(--primary);
+            z-index: 2;
+        }
+
+        .heatmap-cell:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card-bg);
+            color: var(--text);
+            padding: 5px 10px;
+            border-radius: var(--border-radius);
+            font-size: 0.8rem;
+            white-space: pre;
+            z-index: 3;
+            border: 1px solid var(--primary);
+            pointer-events: none;
+        }
+
+        .heatmap-legend {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 1rem;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .legend-colors {
+            display: flex;
+            gap: 4px;
+        }
+
+        .color-box {
+            width: 14px;
+            height: 14px;
+            border-radius: 2px;
+        }
+
+        /* SCROLLBAR PERSONALIZADA */
+        ::-webkit-scrollbar {
+            width: 10px;
+            /* Largura da scrollbar vertical */
+            height: 10px;
+            /* Altura da scrollbar horizontal */
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+            /* Cor do track (fundo) - combinando com --card-bg */
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #00cc6a;
+            /* Cor do thumb (alça) - combinando com --primary-dark */
+            border-radius: 5px;
+            border: 2px solid #1e293b;
+            /* Borda para contraste */
+            transition: all 0.3s ease;
+            /* Transição suave */
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00ff88;
+            /* Cor ao passar o mouse - combinando com --primary */
+            cursor: grab;
+            /* Cursor indicando que pode arrastar */
+        }
+
+        ::-webkit-scrollbar-thumb:active {
+            background: #00a05c;
+            /* Cor quando clicado */
+            cursor: grabbing;
+            /* Cursor de arrastando */
+        }
+
+        /* Para Firefox */
+        html {
+            scrollbar-width: thin;
+            /* "auto" ou "thin" */
+            scrollbar-color: #00cc6a #1e293b;
+            /* thumb e track */
+        }
+
+        .icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #00ff88e4;
+            color: rgb(0, 0, 0);
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            margin-right: 10px;
+            transition: background-color 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .icon-btn:hover {
+            background-color: #fefefe6f;
+            backdrop-filter: blur(8px);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+        }
+
+        #periodo {
+            padding: 8px 12px;
+            border-radius: 20px;
+            margin-right: 10px;
+        }
+
+        /* Botão */
+        .dropbtn {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            padding: 10px 16px;
+            font-size: 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .dropbtn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.03);
+        }
+
+        /* Container dropdown */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Conteúdo dropdown */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background: rgba(30, 30, 30, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            min-width: 160px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .dropdown-content a {
+            color: #fff;
+            padding: 10px 14px;
+            text-decoration: none;
+            display: block;
+            transition: background 0.2s;
+        }
+
+        .dropdown-content a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Mostrar dropdown no hover */
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .subtitle {
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .summary-card {
+            position: relative;
+        }
+
+        .summary-card-subvalue {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+            opacity: 0.8;
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <div class="dashboard-header">
-            <h1>tracKerGG</h1>
-            <p class="subtitle">Visualize suas estatísticas de jogo</p>
+            <h1>Steins;Tracker</h1>
+            <p class="subtitle" id="slogan">Visualize suas estatísticas de jogo</p>
         </div>
+    </div>
 
-        <div class="controls">
-            <button class="btn" onclick="window.location.href='/seletor-de-jogos.html'">
-                <i class="fas fa-gamepad"></i> Selecionar Jogos
-            </button>
-            <select id="periodo" aria-label="Filtrar período" title="Filtrar período">
-                <option value="todos">Todos os registros</option>
-                <option value="30">Últimos 30 dias</option>
-                <option value="7">Últimos 7 dias</option>
-            </select>
-            <button class="btn btn-outline" id="btnExportar">
-                <i class="fas fa-file-export"></i> Exportar CSV
-            </button>
+    <div class="controls">
+        <!-- Ícone redondo para página inicial -->
+        <a href="/index.html" class="icon-btn" title="Página Inicial">
+            <i class="fas fa-home"></i>
+        </a>
+
+        <!-- Ícone redondo para selecionar jogos -->
+        <a href="/seletor-de-jogos.html" class="icon-btn" title="Selecionar Jogos">
+            <i class="fas fa-check-double"></i>
+        </a>
+
+        <!-- Ícone redondo para backgrounds -->
+        <a href="/backgrounds.html" class="icon-btn" title="Backgrounds">
+            <i class="fas fa-image"></i>
+        </a>
+
+        <!-- Ícone redondo para GM -->
+        <a href="/gamer-monitor.html" class="icon-btn" title="Gamer Monitor">
+            <i class="fas fa-gamepad"></i>
+        </a>
+
+        <!-- Ícone redondo para Icones -->
+        <a href="/icons-save.html" class="icon-btn" title="Icons">
+            <i class="fas fa-icons"></i>
+        </a>
+
+        <!-- Dropdown de período -->
+        <select id="periodo" aria-label="Filtrar período" title="Filtrar período">
+            <option value="todos">Todos os registros</option>
+            <option value="30">Últimos 30 dias</option>
+            <option value="7">Últimos 7 dias</option>
+        </select>
+
+        <!-- Ícone redondo para exportar -->
+        <button class="icon-btn" id="btnExportar" title="Exportar CSV">
+            <i class="fas fa-file-export"></i>
+        </button>
+    </div>
+
+    <!-- Cards de Resumo -->
+    <div class="summary-cards">
+        <div class="summary-card">
+            <div class="summary-card-label">Tempo Total</div>
+            <div class="summary-card-value" id="totalTempo">0h 0min</div>
+            <div class="summary-card-subvalue" id="totalTempoDetail"></div>
         </div>
-
-        <!-- Lista de Jogos -->
-        <div class="game-list">
-            <h2 style="margin-bottom: 1rem; color: var(--primary);">Seus Jogos</h2>
-            <table class="game-table" id="tabelaJogos">
-                <thead>
-                    <tr>
-                        <th>Jogo</th>
-                        <th>Tempo Jogado</th>
-                        <th>Última Vez</th>
-                        <th>Sessões</th>
-                    </tr>
-                </thead>
-                <tbody id="corpoTabelaJogos">
-                    <!-- Preenchido dinamicamente -->
-                </tbody>
-            </table>
+        <div class="summary-card">
+            <div class="summary-card-label">Jogos Monitorados</div>
+            <div class="summary-card-value" id="totalJogos">0</div>
         </div>
+        <div class="summary-card">
+            <div class="summary-card-label">Média Diária</div>
+            <div class="summary-card-value" id="mediaDiaria">0h 0min</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-card-label">Meta Diária (2h)</div>
+            <div class="summary-card-value" id="metaStatus">0%</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="metaProgresso" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
 
-        <!-- Cards de Resumo -->
-        <div class="summary-cards">
-            <div class="summary-card">
-                <div class="summary-card-label">Tempo Total</div>
-                <div class="summary-card-value" id="totalTempo">0h 0min</div>
+    <!-- Lista de Jogos -->
+    <div class="game-list">
+        <h2 style="margin-bottom: 1rem; color: var(--primary);">Seus Jogos</h2>
+        <table class="game-table" id="tabelaJogos">
+            <thead>
+                <tr>
+                    <th>Jogo</th>
+                    <th>Tempo Jogado</th>
+                    <th>Última Vez</th>
+                    <th>Sessões</th>
+                </tr>
+            </thead>
+            <tbody id="corpoTabelaJogos">
+                <!-- Preenchido dinamicamente -->
+            </tbody>
+        </table>
+    </div>
+
+
+    <!-- Gráfico de Evolução Diária -->
+    <div class="card card-wide">
+        <div class="card-header">
+            <i class="fas fa-chart-line"></i> Evolução Diária
+        </div>
+        <canvas id="graficoLinha"></canvas>
+    </div>
+    <br>
+    <!-- Heatmap de Frequência Anual -->
+    <div class="card2 card-wide">
+        <div class="card-header">
+            <i class="fas fa-calendar-alt"></i> Frequência de Jogatina (Ano Atual)
+        </div>
+        <div id="heatmap-container">
+            <div class="heatmap-header">
+                <span id="heatmap-period">${new Date().getFullYear()}</span>
             </div>
-            <div class="summary-card">
-                <div class="summary-card-label">Jogos Monitorados</div>
-                <div class="summary-card-value" id="totalJogos">0</div>
-            </div>
-            <div class="summary-card">
-                <div class="summary-card-label">Média Diária</div>
-                <div class="summary-card-value" id="mediaDiaria">0h 0min</div>
-            </div>
-            <div class="summary-card">
-                <div class="summary-card-label">Meta Diária (2h)</div>
-                <div class="summary-card-value" id="metaStatus">0%</div>
-                <div class="progress-container">
-                    <div class="progress-bar" id="metaProgresso" style="width: 0%"></div>
+            <div class="heatmap-grid">
+                <div class="heatmap-days">
+                    <span>Seg</span>
+                    <span>Qua</span>
+                    <span>Sex</span>
                 </div>
+                <div id="heatmap-cells"></div>
+            </div>
+            <div class="heatmap-legend">
+                <span>Menos</span>
+                <div class="legend-colors">
+                    <div class="color-box" style="background-color: #1e293b;"></div>
+                    <div class="color-box" style="background-color: #0f5a3a;"></div>
+                    <div class="color-box" style="background-color: #00a05c;"></div>
+                    <div class="color-box" style="background-color: #00ff88;"></div>
+                </div>
+                <span>Mais</span>
             </div>
         </div>
+    </div>
 
-        <!-- Gráfico de Evolução Diária -->
-        <div class="card card-wide">
-            <div class="card-header">
-                <i class="fas fa-chart-line"></i> Evolução Diária
-            </div>
-            <canvas id="graficoLinha"></canvas>
-        </div>
-
-        <!-- Cards Individuais de Jogos -->
-        <h2 style="margin-top: 2rem; color: var(--primary);">Estatísticas por Jogo</h2>
-        <div class="game-cards" id="cardsJogos">
-            <!-- Preenchido dinamicamente -->
-        </div>
+    <!-- Cards Individuais de Jogos -->
+    <h2 style="margin-top: 2rem; color: var(--primary);">Estatísticas por Jogo</h2>
+    <div class="game-cards" id="cardsJogos">
+        <!-- Preenchido dinamicamente -->
+    </div>
     </div>
 
     <script>
         let graficoLinha;
 
         // Mapeamento de ícones para jogos populares
-        const gameIcons = {
-            'Fortnite': 'https://static.wikia.nocookie.net/fortnite/images/d/d8/Icon_Founders_BR.png',
-            'Valorant': 'https://preview.redd.it/i-want-to-build-the-valorant-symbol-how-i-can-make-it-work-v0-v2mg78m9nv291.jpg?auto=webp&s=0154565554a6dcb72aed87164feebec1abea9309',
-            'League of Legends': 'https://cdn2.steamgriddb.com/icon/882137f311c5728f8e257e56820af92c.png',
-            'Minecraft': 'https://images.icon-icons.com/2699/PNG/512/minecraft_logo_icon_168974.png',
-            'GTA V': 'https://img.icons8.com/fluent/512/gta-5.png',
-            'Counter-Strike 2': 'https://cdn2.steamgriddb.com/icon/e1bd06c3f8089e7552aa0552cb387c92/32/512x512.png',
-            'Dota 2': 'https://img.icons8.com/fluent/512/dota.png',
-            'Apex Legends': 'https://static.wikia.nocookie.net/apexlegends/images/1/1e/Apex_Legends_icon.png',
-            'Call of Duty: Warzone': 'https://static.wikia.nocookie.net/callofduty/images/5/54/Warzone_icon.png',
-            'Overwatch 2': 'https://static.wikia.nocookie.net/overwatch/images/3/3c/Overwatch_2_logo.png',
-            'Rocket League': 'https://static.wikia.nocookie.net/rocketleague/images/3/3f/Rocket_League_icon.png',
-            'FIFA 23': 'https://static.wikia.nocookie.net/fifa/images/4/4a/FIFA_23_icon.png',
-            'Battlefield 2042': 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/aacf7545-f3cd-48d5-b931-28ce4a28db0e/deyxj7j-aea55371-25b6-4a26-a58f-912801c7e6de.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcL2FhY2Y3NTQ1LWYzY2QtNDhkNS1iOTMxLTI4Y2U0YTI4ZGIwZVwvZGV5eGo3ai1hZWE1NTM3MS0yNWI2LTRhMjYtYTU4Zi05MTI4MDFjN2U2ZGUucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.fGUCwNcjCzSX-vVAnMsruyUdiZKVAwFzMNq9RmitRYA',
-            'Rainbow Six Siege': 'https://static.wikia.nocookie.net/rainbowsix/images/1/1a/R6S_icon.png',
-            'World of Warcraft': 'https://static.wikia.nocookie.net/wowpedia/images/3/36/WoW_icon.png',
-            'Fall Guys': 'https://static.wikia.nocookie.net/fallguysultimateknockout/images/6/6c/Fall_Guys_icon.png',
-            'Among Us': 'https://static.wikia.nocookie.net/among-us-wiki/images/0/0a/Among_Us_Steam_Icon.png',
-            'Roblox': 'https://static.wikia.nocookie.net/roblox/images/5/5c/Roblox_Logo_2022.png',
-            'The Sims 4': 'https://static.wikia.nocookie.net/sims/images/5/50/The_Sims_4_icon.png',
-            'Black Desert': 'https://cdn6.aptoide.com/imgs/6/c/c/6cc0a9584df1f6c122471edfc72d8022_icon.png',
-            'Cyberpunk 2077': 'https://static.wikia.nocookie.net/cyberpunk/images/7/7d/Cyberpunk_2077_icon.png'
-        };
+        let gameIcons = {};
+
+        // Função para carregar os ícones do arquivo JSON
+        async function loadGameIcons() {
+            try {
+                const response = await fetch('data/icons.json');
+                if (!response.ok) {
+                    throw new Error('Falha ao carregar ícones');
+                }
+                gameIcons = await response.json();
+            } catch (error) {
+                console.error('Erro ao carregar ícones:', error);
+                gameIcons = {
+                    'default': 'https://cdn-icons-png.flaticon.com/512/3652/3652191.png'
+                };
+            }
+        }
 
         // Função para obter o ícone do jogo
         function getGameIcon(gameName) {
-            return gameIcons[gameName] || 'https://cdn-icons-png.flaticon.com/512/3652/3652191.png';
+            return gameIcons[gameName] || gameIcons['default'] || 'https://cdn-icons-png.flaticon.com/512/3652/3652191.png';
         }
 
         // Função para formatar data
         function formatarData(data) {
             const dt = new Date(data);
-            return dt.toLocaleDateString('pt-BR');
+            return dt.toLocaleDateString('pt-BR', {
+                timeZone: 'America/Sao_Paulo',
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
         }
+
 
         // Função para formatar tempo
         function formatarTempo(minutos) {
             if (minutos < 60) return `${minutos} min`;
+
+            const horasTotal = minutos / 60;
+            const horas = Math.floor(horasTotal);
+            const mins = Math.round((horasTotal - horas) * 60);
+
+            if (horas < 24) {
+                return `${horas}h ${mins}min`;
+            } else {
+                const dias = Math.floor(horas / 24);
+                const horasRestantes = horas % 24;
+                return `${dias}d ${horasRestantes}h`;
+            }
+        }
+
+        function formatarTempoCompleto(minutos) {
+            const horasTotal = minutos / 60;
+            const horas = Math.floor(horasTotal);
+            const mins = minutos % 60;
+            return `${horas}h ${mins}min`;
+        }
+
+        function formatarMinutosParaHoras(minutos) {
             const horas = Math.floor(minutos / 60);
             const mins = minutos % 60;
             return `${horas}h ${mins}min`;
@@ -518,9 +869,12 @@
             return { tempo: mapa, sessoes: contagemSessoes, ultimaVez: ultimaVez };
         }
 
-        function formatarDataISO(d) {
-            const date = new Date(d);
-            return date.toISOString().slice(0, 10);
+        function formatarDataISO(data) {
+            const date = new Date(data);
+            // Ajusta para o fuso horário de Brasília (UTC-3)
+            const offset = date.getTimezoneOffset() * 60000;
+            const localDate = new Date(date.getTime() - offset);
+            return localDate.toISOString().split('T')[0]; // YYYY-MM-DD
         }
 
         function agruparPorDia(logs) {
@@ -534,11 +888,16 @@
             return mapa;
         }
 
-        function criarDatasContinuas(mapa, dias) {
+        function criarDatasContinuas(dias) {
             const datas = [];
             const hoje = new Date();
+
+            // Ajusta para o fuso horário de Brasília
+            hoje.setHours(hoje.getHours() - 3);
+
             for (let i = dias - 1; i >= 0; i--) {
-                const dt = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() - i);
+                const dt = new Date(hoje);
+                dt.setDate(dt.getDate() - i);
                 datas.push(formatarDataISO(dt));
             }
             return datas;
@@ -563,33 +922,40 @@
         }
 
         function atualizarResumo(totalMinutos, totalJogos, logs, periodo) {
+            // Tempo Total
             document.getElementById('totalTempo').textContent = formatarTempo(totalMinutos);
+            document.getElementById('totalTempoDetail').textContent = `(${formatarTempoCompleto(totalMinutos)} total)`;
+
+            // Jogos Monitorados
             document.getElementById('totalJogos').textContent = totalJogos;
 
-            // Calcular média diária
-            let dias = periodo === 'todos' ?
-                diasEntreDatas(logs[0]?.inicio, logs[logs.length - 1]?.fim) :
-                parseInt(periodo);
-
-            const mediaDiaria = totalMinutos / (dias || 1);
+            // Média Diária
+            let diasCalculo;
+            if (periodo === 'todos') {
+                const primeiraData = new Date(logs.reduce((min, log) =>
+                    new Date(log.inicio) < min ? new Date(log.inicio) : min, new Date()));
+                diasCalculo = diasEntreDatas(primeiraData, new Date());
+            } else {
+                diasCalculo = parseInt(periodo);
+            }
+            const mediaDiaria = totalMinutos / diasCalculo;
             document.getElementById('mediaDiaria').textContent = formatarTempo(mediaDiaria);
 
-            // Calcular meta (2h = 120min)
-            const percentualMeta = Math.min(Math.round((mediaDiaria / 120) * 100), 100);
+            // Meta Diária (2h = 120min) - calcula apenas para o dia atual
+            const hoje = formatarDataISO(new Date());
+            const minutosHoje = logs.reduce((total, log) => {
+                const dataLog = formatarDataISO(log.inicio);
+                return dataLog === hoje ? total + log.tempoTotalMin : total;
+            }, 0);
+
+            const percentualMeta = Math.min(Math.round((minutosHoje / 120) * 100), 100);
             document.getElementById('metaStatus').textContent = `${percentualMeta}%`;
             document.getElementById('metaProgresso').style.width = `${percentualMeta}%`;
 
-            // Mudar cor da barra de progresso conforme o percentual
+            // Barra de progresso colorida
             const progressBar = document.getElementById('metaProgresso');
-            if (percentualMeta > 100) {
-                progressBar.style.backgroundColor = '#ff5555';
-            } else if (percentualMeta > 80) {
-                progressBar.style.backgroundColor = '#00ff88';
-            } else if (percentualMeta > 50) {
-                progressBar.style.backgroundColor = '#ffcc00';
-            } else {
-                progressBar.style.backgroundColor = '#ff5555';
-            }
+            progressBar.style.backgroundColor = percentualMeta >= 100 ? '#00ff88' :
+                percentualMeta > 50 ? '#00ff88' : '#00ff88';
         }
 
         function atualizarListaJogos(dadosAgrupados) {
@@ -687,10 +1053,23 @@
             atualizarCardsJogos(dadosAgrupados);
 
             // Gráfico de linha - evolução diária
-            const mapaDias = agruparPorDia(logs);
-            const datas = periodo === 'todos' ?
-                Object.keys(mapaDias).sort() :
-                criarDatasContinuas(parseInt(periodo), parseInt(periodo));
+            const mapaDias = {};
+            logs.forEach(log => {
+                const data = formatarDataISO(log.inicio); // Já usa fuso correto
+                if (!mapaDias[data]) mapaDias[data] = {};
+                if (!mapaDias[data][log.jogo]) mapaDias[data][log.jogo] = 0;
+                mapaDias[data][log.jogo] += log.tempoTotalMin;
+            });
+            let datas;
+            if (periodo === 'todos') {
+                // Para 'todos', cria um range completo desde a primeira data até hoje
+                const primeiraData = new Date(logs.reduce((min, log) =>
+                    new Date(log.inicio) < min ? new Date(log.inicio) : min, new Date()));
+                const dias = diasEntreDatas(primeiraData, new Date());
+                datas = criarDatasContinuas(dias);
+            } else {
+                datas = criarDatasContinuas(parseInt(periodo));
+            }
             const datasUltimosDias = periodo === 'todos' ?
                 Object.keys(mapaDias).sort() :
                 criarDatasContinuas(parseInt(periodo));
@@ -751,6 +1130,8 @@
                     }
                 }
             });
+
+            gerarHeatmap(logs);
         }
 
         function exportarCSV() {
@@ -789,8 +1170,111 @@
         document.getElementById('periodo').addEventListener('change', gerarGraficos);
         document.getElementById('btnExportar').addEventListener('click', exportarCSV);
 
-        window.onload = gerarGraficos;
+        window.onload = async function () {
+            await loadGameIcons();
+            gerarGraficos();
+        };
+
+        function gerarHeatmap(logs) {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            const startDate = new Date(currentYear, 0, 1); // 1º de janeiro do ano atual
+            const endDate = new Date(currentYear, 11, 31); // 31 de dezembro do ano atual
+
+            // Agrupar por dia
+            const dailyStats = {};
+            logs.forEach(log => {
+                const logDate = new Date(log.inicio);
+                if (logDate.getFullYear() === currentYear) {
+                    const date = formatarDataISO(log.inicio);
+                    if (!dailyStats[date]) dailyStats[date] = 0;
+                    dailyStats[date] += log.tempoTotalMin;
+                }
+            });
+
+            // Criar células organizadas por semanas do ano
+            const container = document.getElementById('heatmap-cells');
+            container.innerHTML = '';
+
+            // Calcular número de semanas no ano (53 no máximo)
+            const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+            const weekCount = Math.ceil((endDate - startDate) / msPerWeek) + 1;
+
+            container.style.gridTemplateColumns = `repeat(${weekCount}, 1fr)`;
+            document.getElementById('heatmap-period').textContent = currentYear;
+
+            // Preencher células para cada dia da semana (seg a dom) e cada semana do ano
+            for (let day = 0; day < 7; day++) {
+                for (let week = 0; week < weekCount; week++) {
+                    const date = new Date(startDate);
+                    date.setDate(date.getDate() + (week * 7) + day);
+
+                    // Verificar se a data está dentro do ano atual e não no futuro
+                    if (date > endDate || date > now) {
+                        const emptyCell = document.createElement('div');
+                        emptyCell.className = 'heatmap-cell';
+                        emptyCell.style.visibility = 'hidden';
+                        container.appendChild(emptyCell);
+                        continue;
+                    }
+
+                    const dateStr = formatarDataISO(date);
+                    const minutes = dailyStats[dateStr] || 0;
+
+                    const cell = document.createElement('div');
+                    cell.className = 'heatmap-cell';
+                    cell.setAttribute('data-tooltip', `${date.toLocaleDateString('pt-BR')}\n${formatarTempo(minutes)}`);
+
+                    // Definir cor baseada no tempo jogado
+                    if (minutes === 0) {
+                        cell.style.backgroundColor = 'var(--card-bg)';
+                    } else if (minutes < 30) {
+                        cell.style.backgroundColor = '#0f5a3a';
+                    } else if (minutes < 120) {
+                        cell.style.backgroundColor = '#00a05c';
+                    } else {
+                        cell.style.backgroundColor = 'var(--primary)';
+                    }
+
+                    container.appendChild(cell);
+                }
+            }
+        }
     </script>
+    <script>
+        const slogans = [
+            "Controle o tempo. Rastreie seu destino.",
+            "Porque até o tempo pode ser monitorado.",
+            "Visualize. Rastreie. Diverja.",
+            "Seus jogos. Suas linhas do tempo.",
+            "Steins;Tracker — Reading Steiner ativado.",
+            "Cada partida conta. Em qualquer linha temporal.",
+            "Rastreie seu passado para dominar o futuro.",
+            "Onde os jogos seguem suas próprias worldlines.",
+            "O futuro é gravado. Estatísticas também.",
+            "Steins;Tracker — Porque o tempo de jogo também importa."
+        ];
+
+        const sloganEl = document.getElementById('slogan');
+
+        function trocarSlogan() {
+            const novo = slogans[Math.floor(Math.random() * slogans.length)];
+            // efeito de fade
+            sloganEl.style.opacity = 0;
+            setTimeout(() => {
+                sloganEl.textContent = novo;
+                sloganEl.style.opacity = 1;
+            }, 500);
+        }
+
+        // Troca na primeira carga
+        trocarSlogan();
+
+        // Troca a cada 30 segundos
+        setInterval(trocarSlogan, 30000);
+    </script>
+
+
 </body>
 
 </html>
