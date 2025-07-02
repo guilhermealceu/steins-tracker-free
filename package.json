@@ -4,11 +4,15 @@
   "description": "Monitor de tempo de jogo",
   "bin": "monitor.js",
   "type": "module",
-  "scripts": {},
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "node-notifier": "^10.0.1",
     "ps-list": "^8.0.0",
-    "vdf-parser": "^1.1.0",
     "regedit": "^3.0.3",
-    "node-notifier": "^10.0.1"
+    "vdf-parser": "^1.1.0"
   }
 }
