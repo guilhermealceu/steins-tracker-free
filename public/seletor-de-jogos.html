@@ -4,23 +4,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Selecionar Jogos</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/128/5678/5678695.png">
+  <title>Selecionar Jogos - Steins;Tracker</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/background.css">
+  <script type="module" src="assets/js/background.js" defer></script>
   <style>
     :root {
       --primary: #00ff88;
       --primary-hover: #00e67a;
+      --primary-light: rgba(0, 255, 136, 0.1);
       --secondary: #1a1a2e;
-      --background: #0f0f1a;
-      --surface: #161625;
+      --background: #0f172a;
+      --surface: #272c3bd6;
+      --surface-hover: #ffffff45;
       --text-primary: #f0f0f0;
       --text-secondary: #b8b8b8;
       --border-radius: 12px;
+      --border-radius-sm: 8px;
       --shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      --shadow-sm: 0 4px 8px rgba(0, 0, 0, 0.1);
       --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --error: #ff4444;
+      --warning: #ffbb33;
     }
 
     * {
@@ -44,25 +54,50 @@
     .container {
       width: 100%;
       max-width: 800px;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     header {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+
+    header::after {
+      content: '';
+      display: block;
+      width: 100px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), #00b3ff);
+      margin: 1rem auto 0;
+      border-radius: 3px;
     }
 
     h1 {
-      font-size: 2.2rem;
+      font-size: 2.4rem;
       font-weight: 700;
       background: linear-gradient(90deg, var(--primary), #00b3ff);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
       margin-bottom: 0.5rem;
+      letter-spacing: -0.5px;
     }
 
     h2 {
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       font-weight: 400;
       color: var(--text-secondary);
     }
@@ -82,6 +117,7 @@
       font-weight: 600;
       font-size: 1rem;
       color: #121212;
+      backdrop-filter: blur(10px);
       cursor: pointer;
       box-shadow: var(--shadow);
       transition: var(--transition);
@@ -95,53 +131,82 @@
     button:hover {
       background-color: var(--primary-hover);
       transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
     }
 
     button:active {
       transform: translateY(0);
     }
 
-    #btnHome {
+    .btn-secondary {
       background-color: var(--surface);
       color: var(--primary);
     }
 
-    #btnHome:hover {
-      background-color: #1e1e3a;
+    .btn-secondary:hover {
+      background-color: var(--surface-hover);
     }
 
-    #btndeletor {
+    .btn-danger {
       background-color: var(--surface);
-      color: var(--primary);
+      color: var(--error);
     }
 
-    #btndeletor:hover {
-      background-color: #eb4a0b;
+    .btn-danger:hover {
+      background-color: rgba(255, 68, 68, 0.1);
+      color: var(--error);
     }
 
     .games-list {
-      background: var(--surface);
       border-radius: var(--border-radius);
+      background: rgb(30 41 59 / 90%);
+      backdrop-filter: blur(10px);
       padding: 1.5rem;
-      box-shadow: var(--shadow);
       max-height: 60vh;
       overflow-y: auto;
+    }
+
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .list-title {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--primary);
+    }
+
+    .game-count {
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
     }
 
     .game-item {
       display: flex;
       align-items: center;
-      padding: 0.8rem 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 1rem;
+      border-radius: var(--border-radius-sm);
       transition: var(--transition);
+      margin-bottom: 0.5rem;
+      background: rgba(255, 255, 255, 0.02);
     }
 
     .game-item:last-child {
-      border-bottom: none;
+      margin-bottom: 0;
     }
 
     .game-item:hover {
-      background: rgba(255, 255, 255, 0.02);
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateX(5px);
     }
 
     .game-checkbox {
@@ -176,6 +241,14 @@
       flex: 1;
       cursor: pointer;
       user-select: none;
+      font-weight: 500;
+    }
+
+    .game-exe {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 0.2rem;
     }
 
     .game-actions {
@@ -189,11 +262,11 @@
       color: var(--text-secondary);
       cursor: pointer;
       font-size: 1rem;
-      padding: 0.3rem;
+      padding: 0.5rem;
       transition: var(--transition);
       border-radius: 4px;
-      width: 30px;
-      height: 30px;
+      width: 36px;
+      height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -205,7 +278,8 @@
     }
 
     .game-action-btn.delete:hover {
-      color: #ff4444;
+      color: var(--error);
+      background: rgba(255, 68, 68, 0.1);
     }
 
     input[type="file"] {
@@ -221,9 +295,17 @@
       width: 100%;
       height: 100%;
       background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
       z-index: 1000;
       justify-content: center;
       align-items: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal.show {
+      opacity: 1;
+      display: flex;
     }
 
     .modal-content {
@@ -233,6 +315,12 @@
       width: 90%;
       max-width: 500px;
       box-shadow: var(--shadow);
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+
+    .modal.show .modal-content {
+      transform: translateY(0);
     }
 
     .modal-header {
@@ -245,6 +333,7 @@
     .modal-title {
       font-size: 1.5rem;
       font-weight: 600;
+      color: var(--primary);
     }
 
     .modal-close {
@@ -253,6 +342,20 @@
       color: var(--text-secondary);
       font-size: 1.5rem;
       cursor: pointer;
+      transition: var(--transition);
+      min-width: 15px;
+    }
+
+    .modal-close1 {
+      background: #f0ffff00;
+      color: white;
+      border: none;
+      max-width: min-content;
+    }
+
+    .modal-close:hover {
+      color: var(--primary);
+      transform: rotate(90deg);
     }
 
     .modal-body {
@@ -260,23 +363,31 @@
     }
 
     .form-group {
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
     }
 
     .form-group label {
       display: block;
       margin-bottom: 0.5rem;
       color: var(--text-secondary);
+      font-size: 0.9rem;
     }
 
     .form-group input {
       width: 100%;
-      padding: 0.8rem;
+      padding: 0.8rem 1rem;
       background: var(--background);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: var(--border-radius);
+      border-radius: var(--border-radius-sm);
       color: var(--text-primary);
       font-family: inherit;
+      transition: var(--transition);
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.2);
     }
 
     .modal-footer {
@@ -300,8 +411,93 @@
       border-radius: 4px;
     }
 
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 89%;
+      left: 20px;
+      background: var(--surface);
+      color: var(--text-primary);
+      padding: 1rem 1.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      z-index: 1001;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast.success {
+      border-left: 4px solid var(--primary);
+    }
+
+    .toast.error {
+      border-left: 4px solid var(--error);
+    }
+
+    .toast-icon {
+      font-size: 1.2rem;
+    }
+
+    .toast.success .toast-icon {
+      color: var(--primary);
+    }
+
+    .toast.error .toast-icon {
+      color: var(--error);
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-secondary);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: rgba(255, 255, 255, 0.1);
+    }
+
+    .empty-state p {
+      margin-top: 0.5rem;
+    }
+
     /* Responsive adjustments */
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      h2 {
+        font-size: 1.1rem;
+      }
+
+      .game-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+
+      .game-actions {
+        align-self: flex-end;
+      }
+    }
+
+    @media (max-width: 480px) {
       .actions {
         flex-direction: column;
       }
@@ -310,9 +506,59 @@
         width: 100%;
       }
 
-      h1 {
-        font-size: 1.8rem;
+      .modal-footer {
+        flex-direction: column;
       }
+
+      .modal-footer button {
+        width: 100%;
+      }
+    }
+
+    /* SCROLLBAR PERSONALIZADA */
+    ::-webkit-scrollbar {
+      width: 10px;
+      /* Largura da scrollbar vertical */
+      height: 10px;
+      /* Altura da scrollbar horizontal */
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #1e293b;
+      /* Cor do track (fundo) - combinando com --card-bg */
+      border-radius: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #00cc6a;
+      /* Cor do thumb (alça) - combinando com --primary-dark */
+      border-radius: 5px;
+      border: 2px solid #1e293b;
+      /* Borda para contraste */
+      transition: all 0.3s ease;
+      /* Transição suave */
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00ff88;
+      /* Cor ao passar o mouse - combinando com --primary */
+      cursor: grab;
+      /* Cursor indicando que pode arrastar */
+    }
+
+    ::-webkit-scrollbar-thumb:active {
+      background: #00a05c;
+      /* Cor quando clicado */
+      cursor: grabbing;
+      /* Cursor de arrastando */
+    }
+
+    /* Para Firefox */
+    html {
+      scrollbar-width: thin;
+      /* "auto" ou "thin" */
+      scrollbar-color: #00cc6a #1e293b;
+      /* thumb e track */
     }
   </style>
 </head>
@@ -320,27 +566,38 @@
 <body>
   <div class="container">
     <header>
-      <h1>tracKerGG</h1>
+      <h1>Steins;Tracker</h1>
       <h2>Selecione os jogos a monitorar</h2>
     </header>
 
     <div class="actions">
-      <button id="btnHome">
-        <span>🏠</span>
-        <span>Voltar para Página Principal</span>
+      <button id="btnHome" class="btn-secondary">
+        <i class="fas fa-arrow-left"></i>
+        <span>Página Principal</span>
       </button>
-      <button id="btndeletor">
-        <span>❌</span>
-        <span>Deletor</span>
+      <button id="btndeletor" class="btn-danger">
+        <i class="fas fa-gamepad"></i>
+        <span>Gamer Monitor</span>
+      </button>
+      <!-- Adicione este botão junto com os outros -->
+      <button id="btnProcurarJogos" class="btn-secondary">
+        <i class="fas fa-folder-open"></i>
+        <span>Procurar jogos</span>
       </button>
       <button id="btnAdicionarJogo">
-        <span>➕</span>
-        <span>Adicionar jogo via EXE</span>
+        <i class="fas fa-plus"></i>
+        <span>Adicionar jogo</span>
       </button>
       <input type="file" id="inputExe" accept=".exe" />
     </div>
 
-    <div class="games-list" id="jogosCheckboxes" aria-label="Lista de jogos para monitorar" role="list"></div>
+    <div class="games-list" id="jogosCheckboxes" aria-label="Lista de jogos para monitorar" role="list">
+      <div class="list-header">
+        <div class="list-title">Jogos selecionados</div>
+        <div class="game-count" id="gameCounter">0 jogos</div>
+      </div>
+      <div id="gamesContainer"></div>
+    </div>
   </div>
 
   <!-- Modal para editar nome do jogo -->
@@ -348,7 +605,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h3 class="modal-title">Editar Nome do Jogo</h3>
-        <button class="modal-close" id="closeModal">&times;</button>
+        <button class="modal-close1" id="closeModal">&times;</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
@@ -357,41 +614,76 @@
         </div>
         <div class="form-group">
           <label for="editFriendlyName">Nome amigável</label>
-          <input type="text" id="editFriendlyName">
+          <input type="text" id="editFriendlyName" placeholder="Digite um nome amigável...">
         </div>
       </div>
       <div class="modal-footer">
-        <button id="cancelEdit">Cancelar</button>
-        <button id="saveEdit" style="background-color: var(--primary); color: #121212;">Salvar</button>
+        <button id="cancelEdit" class="btn-secondary">Cancelar</button>
+        <button id="saveEdit">Salvar Alterações</button>
       </div>
     </div>
   </div>
 
+  <!-- Adicione este modal -->
+  <div class="modal" id="scanModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Procurar jogos</h3>
+        <button class="modal-close1" id="closeScanModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="scanPath">Digite o caminho completo da pasta (ex: C:\Program Files\Steam\steamapps\common)</label>
+          <input type="text" id="scanPath" placeholder="Cole o caminho completo da pasta aqui...">
+        </div>
+        <div id="scanResults" style="max-height: 300px; overflow-y: auto; margin-top: 1rem;"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="cancelScan" class="btn-secondary">Cancelar</button>
+        <button id="scanNow" class="btn-secondary">
+          <i class="fas fa-search"></i> Procurar
+        </button>
+        <button id="saveScan">Salvar jogos selecionados</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast">
+    <div class="toast-icon"></div>
+    <div class="toast-message"></div>
+  </div>
+
   <script>
     const nomeAmigavel = {
-      'VALORANT-Win64-Shipping.exe': 'Valorant',
-      'GTA5.exe': 'GTA V',
-      'cs2.exe': 'Counter-Strike 2',
-      'MinecraftLauncher.exe': 'Minecraft Launcher',
-      'Minecraft.exe': 'Minecraft',
-      'BF2042.exe': 'Battlefield 2042',
-      'BlackDesert64.exe': 'Black Desert',
-      'ForzaHorizon5.exe': 'Forza Horizon 5',
-      'RDR2.exe': 'Red Dead Redemption 2',
-      'FallenDoll.exe': 'Fallen Doll',
-      'BladeAndSorcery.exe': 'Blade and Sorcery',
-      'Pavlov-Win64-Shipping.exe': 'Pavlov VR',
-      'Pavlov.exe': 'Pavlov VR (alternativo)',
-      'Beat Saber.exe': 'Beat Saber',
-      'VRChat.exe': 'VRChat',
-      'ChilloutVR.exe': 'Chillout VR',
-      'Starfield.exe': 'Starfield',
-      'LeagueClient.exe': 'League of Legends',
-      'eldenring.exe': 'Elden Ring'
+      'VALORANT-Win64-Shipping.exe': 'Valorant'
     };
 
     const jogosManuais = Object.keys(nomeAmigavel);
     const API_BASE = '/api';
+
+    // Toast notification functions
+    function showToast(message, type = 'success', duration = 3000) {
+      const toast = document.getElementById('toast');
+      const toastIcon = toast.querySelector('.toast-icon');
+      const toastMessage = toast.querySelector('.toast-message');
+
+      toast.className = `toast ${type}`;
+      toastMessage.textContent = message;
+
+      if (type === 'success') {
+        toastIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+      } else {
+        toastIcon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+      }
+
+      toast.classList.add('show');
+
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, duration);
+    }
+
     async function obterSelecionados() {
       try {
         const res = await fetch(`${API_BASE}/jogos-selecionados`);
@@ -405,25 +697,38 @@
 
     async function salvarSelecionados(selecionados) {
       try {
-        await fetch('/api/jogos-selecionados', {
+        const response = await fetch('/api/jogos-selecionados', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(selecionados)
         });
+
+        if (response.ok) {
+          showToast('Seleção de jogos salva com sucesso!');
+        } else {
+          throw new Error('Erro ao salvar');
+        }
       } catch (err) {
-        alert('Erro ao salvar seleção de jogos.');
+        showToast('Erro ao salvar seleção de jogos', 'error');
         console.error(err);
       }
     }
 
     async function salvarNomeAmigavel(exeName, friendlyName) {
       try {
-        await fetch(`${API_BASE}/nomes-amigaveis`, {
+        const response = await fetch(`${API_BASE}/nomes-amigaveis`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ exeName, friendlyName })
         });
+
+        if (response.ok) {
+          showToast('Nome amigável salvo com sucesso!');
+        } else {
+          throw new Error('Erro ao salvar');
+        }
       } catch (err) {
+        showToast('Erro ao salvar nome amigável', 'error');
         console.error('Erro ao salvar nome amigável:', err);
       }
     }
@@ -444,15 +749,17 @@
           });
         }
 
+        showToast(`Jogo "${nomeAmigavel[exeName] || exeName}" removido`, 'success');
         await renderizarCheckboxes();
       } catch (err) {
-        alert('Erro ao remover jogo.');
+        showToast('Erro ao remover jogo', 'error');
         console.error(err);
       }
     }
 
     async function renderizarCheckboxes() {
-      const container = document.getElementById('jogosCheckboxes');
+      const container = document.getElementById('gamesContainer');
+      const counter = document.getElementById('gameCounter');
       container.innerHTML = '';
       const selecionados = await obterSelecionados();
 
@@ -470,6 +777,20 @@
       // Unir jogosManuais + extras (manter ordem e evitar repetição)
       const todosJogos = [...new Set([...jogosManuais, ...selecionados])];
 
+      // Update counter
+      counter.textContent = `${todosJogos.length} ${todosJogos.length === 1 ? 'jogo' : 'jogos'}`;
+
+      if (todosJogos.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-gamepad"></i>
+            <h3>Nenhum jogo adicionado</h3>
+            <p>Adicione jogos clicando no botão acima</p>
+          </div>
+        `;
+        return;
+      }
+
       todosJogos.forEach(jogo => {
         const item = document.createElement('div');
         item.className = 'game-item';
@@ -482,14 +803,24 @@
         input.value = jogo;
         input.checked = selecionados.includes(jogo);
         input.addEventListener('change', async () => {
-          const novos = [...document.querySelectorAll('#jogosCheckboxes input:checked')].map(cb => cb.value);
+          const novos = [...document.querySelectorAll('#gamesContainer input:checked')].map(cb => cb.value);
           await salvarSelecionados(novos);
         });
+
+        const labelContainer = document.createElement('div');
+        labelContainer.style.flex = '1';
 
         const label = document.createElement('label');
         label.className = 'game-label';
         label.htmlFor = input.id;
         label.textContent = nomeAmigavel[jogo] || jogo;
+
+        const exeName = document.createElement('span');
+        exeName.className = 'game-exe';
+        exeName.textContent = jogo;
+
+        labelContainer.appendChild(label);
+        labelContainer.appendChild(exeName);
 
         const actions = document.createElement('div');
         actions.className = 'game-actions';
@@ -518,7 +849,7 @@
         }
 
         item.appendChild(input);
-        item.appendChild(label);
+        item.appendChild(labelContainer);
         item.appendChild(actions);
         container.appendChild(item);
       });
@@ -538,12 +869,12 @@
       currentEditingGame = exeName;
       editExeName.value = exeName;
       editFriendlyName.value = nomeAmigavel[exeName] || exeName;
-      modal.style.display = 'flex';
+      modal.classList.add('show');
       editFriendlyName.focus();
     }
 
     function fecharModal() {
-      modal.style.display = 'none';
+      modal.classList.remove('show');
       currentEditingGame = null;
     }
 
@@ -571,7 +902,7 @@
 
     // Fechar modal com ESC
     document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && modal.style.display === 'flex') {
+      if (event.key === 'Escape' && modal.classList.contains('show')) {
         fecharModal();
       }
     });
@@ -590,7 +921,7 @@
     });
 
     btndeletor.addEventListener('click', () => {
-      window.location.href = '/deletor.html';
+      window.location.href = '/gamer-monitor.html';
     });
 
     inputExe.addEventListener('change', async () => {
@@ -603,17 +934,138 @@
       if (!selecionados.includes(nomeExe)) {
         selecionados.push(nomeExe);
         await salvarSelecionados(selecionados);
-        alert(`Jogo "${nomeExe}" adicionado para monitoramento!`);
+        showToast(`"${nomeExe}" adicionado para monitoramento!`);
         await renderizarCheckboxes();
       } else {
-        alert(`Jogo "${nomeExe}" já está na lista.`);
+        showToast(`"${nomeExe}" já está na lista`, 'warning');
       }
 
       inputExe.value = ''; // reset para poder adicionar o mesmo arquivo outra vez
     });
 
     // Inicializa
-    renderizarCheckboxes();
+    document.addEventListener('DOMContentLoaded', () => {
+      renderizarCheckboxes();
+    });
+  </script>
+  <script>
+
+    // Adicione estas funções ao seu script existente
+
+    // Event listeners para o modal de busca
+    document.getElementById('btnProcurarJogos').addEventListener('click', () => {
+      document.getElementById('scanModal').classList.add('show');
+      document.getElementById('scanPath').focus();
+    });
+
+    document.getElementById('closeScanModal').addEventListener('click', closeScanModal);
+    document.getElementById('cancelScan').addEventListener('click', closeScanModal);
+
+    document.getElementById('scanNow').addEventListener('click', async () => {
+      const path = document.getElementById('scanPath').value.trim();
+      if (path) {
+        await scanForGames(path);
+      } else {
+        showToast('Digite um caminho válido', 'error');
+      }
+    });
+
+    document.getElementById('saveScan').addEventListener('click', async () => {
+      const checkboxes = document.querySelectorAll('#scanResults input[type="checkbox"]:checked');
+      const newGames = Array.from(checkboxes).map(cb => cb.value);
+
+      if (newGames.length > 0) {
+        const currentGames = await obterSelecionados();
+        const updatedGames = [...new Set([...currentGames, ...newGames])];
+
+        await salvarSelecionados(updatedGames);
+        showToast(`${newGames.length} jogos adicionados!`, 'success');
+        await renderizarCheckboxes();
+        closeScanModal();
+      } else {
+        showToast('Nenhum jogo selecionado', 'warning');
+      }
+    });
+
+    function closeScanModal() {
+      document.getElementById('scanModal').classList.remove('show');
+      document.getElementById('scanResults').innerHTML = '';
+      document.getElementById('scanPath').value = '';
+    }
+
+    async function scanForGames(folderPath) {
+      const scanResults = document.getElementById('scanResults');
+      scanResults.innerHTML = '<p>Procurando jogos... (isso pode demorar)</p>';
+
+      try {
+        // Adicione validação do caminho
+        if (!folderPath || !folderPath.includes(':')) {
+          throw new Error('Caminho inválido. Use o formato completo (ex: C:\\Pasta\\Jogos)');
+        }
+
+        const response = await fetch('/api/scan-games', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            path: folderPath,
+            recursive: true, // Adicione suporte a busca recursiva
+            fileTypes: ['.exe', '.lnk'] // Filtre por tipos específicos
+          })
+        });
+
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || 'Erro na busca');
+        }
+
+        const { games, error } = await response.json();
+
+        if (error) {
+          throw new Error(error);
+        }
+
+        if (!games || games.length === 0) {
+          scanResults.innerHTML = '<p>Nenhum executável de jogo encontrado nesta pasta.</p>';
+          return;
+        }
+
+        let html = `
+      <div style="margin-bottom: 1rem;">
+        <label style="display: flex; align-items: center; gap: 0.5rem;">
+          <input type="checkbox" id="selectAllGames" checked>
+          <span>Selecionar todos</span>
+        </label>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr; gap: 0.5rem; max-height: 300px; overflow-y: auto;">
+    `;
+
+        games.forEach(game => {
+          html += `
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <input type="checkbox" id="scan-${game.replace(/\W/g, '-')}" value="${game}" checked>
+          <label for="scan-${game.replace(/\W/g, '-')}" style="cursor: pointer; word-break: break-all;">${game}</label>
+        </div>
+      `;
+        });
+
+        html += '</div>';
+        scanResults.innerHTML = html;
+
+        // Selecionar/deselecionar todos
+        document.getElementById('selectAllGames').addEventListener('change', (e) => {
+          const checkboxes = document.querySelectorAll('#scanResults input[type="checkbox"]:not(#selectAllGames)');
+          checkboxes.forEach(cb => cb.checked = e.target.checked);
+        });
+
+      } catch (err) {
+        console.error('Erro na busca:', err);
+        scanResults.innerHTML = `
+      <p style="color: var(--error);">Erro ao procurar jogos:</p>
+      <p>${err.message}</p>
+      <p>Verifique se o caminho está correto e acessível pelo servidor.</p>
+    `;
+      }
+    }
   </script>
 </body>
 
