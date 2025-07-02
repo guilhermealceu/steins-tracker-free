@@ -10,9 +10,9 @@ import notifier from 'node-notifier';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const logPath = path.join(__dirname, 'jogos_log.json');
-const selecionadosPath = path.join(__dirname, 'jogos_selecionados.json');
-const nomesAmigaveisPath = path.join(__dirname, 'nomes_amigaveis.json');
+const logPath = path.join(__dirname, '/public/data/jogos_log.json');
+const selecionadosPath = path.join(__dirname, '/public/data/jogos_selecionados.json');
+const nomesAmigaveisPath = path.join(__dirname, '/public/data/nomes_amigaveis.json');
 
 const INTERVALO_SESSAO = 30 * 1000;
 const estado = {};
@@ -20,26 +20,6 @@ const estado = {};
 // Nomes amigáveis padrão
 const nomeAmigavelPadrao = {
   'VALORANT-Win64-Shipping.exe': 'Valorant',
-  'GTA5.exe': 'GTA V',
-  'cs2.exe': 'Counter-Strike 2',
-  'MinecraftLauncher.exe': 'Minecraft Launcher',
-  'Minecraft.exe': 'Minecraft',
-  'BF2042.exe': 'Battlefield 2042',
-  'BlackDesert64.exe': 'Black Desert',
-  'ForzaHorizon5.exe': 'Forza Horizon 5',
-  'RDR2.exe': 'Red Dead Redemption 2',
-  'FallenDoll.exe': 'Fallen Doll',
-  'BladeAndSorcery.exe': 'Blade and Sorcery',
-  'Pavlov-Win64-Shipping.exe': 'Pavlov VR',
-  'Pavlov.exe': 'Pavlov VR (alternativo)',
-  'Beat Saber.exe': 'Beat Saber',
-  'VRChat.exe': 'VRChat',
-  'ChilloutVR.exe': 'Chillout VR',
-  'Starfield.exe': 'Starfield',
-  'LeagueClient.exe': 'League of Legends',
-  'FortniteClient-Win64-Shipping.exe': 'Fortnite',
-  'GenshinImpact.exe': 'Genshin Impact',
-  'eldenring.exe': 'Elden Ring'
 };
 
 // Carrega nomes amigáveis personalizados do arquivo
@@ -141,45 +121,11 @@ function getExecutablesExtra(pastasExtras) {
   return executaveis;
 }
 
+// No monitor.js, substitua a função getExecutables por:
 async function getExecutables() {
-  const libsSteam = await getSteamLibraries();
-  const executaveis = new Set();
-
-  for (const lib of libsSteam) {
-    if (!fs.existsSync(lib)) continue;
-
-    try {
-      fs.readdirSync(lib, { withFileTypes: true }).forEach(d => {
-        if (d.isDirectory()) {
-          const dir = path.join(lib, d.name);
-          try {
-            fs.readdirSync(dir).forEach(f => {
-              if (f.toLowerCase().endsWith('.exe')) {
-                executaveis.add(f);
-              }
-            });
-          } catch { }
-        }
-      });
-    } catch { }
-  }
-
-  const pastasExtras = [
-    'E:\\Epic',
-    'D:\\Games',
-    'F:\\SteamLibrary\\steamapps\\common',
-    'D:\\SteamLibrary\\steamapps\\common',
-    'C:\\SteamLibrary\\steamapps\\common'
-  ];
-
-  const extras = getExecutablesExtra(pastasExtras);
-  extras.forEach(e => executaveis.add(e));
-
-  // Carregar apenas os selecionados
+  // Carrega apenas os selecionados
   const selecionados = carregarJogosSelecionados();
-  selecionados.forEach(j => executaveis.add(j));
-
-  return Array.from(executaveis);
+  return Array.from(new Set(selecionados)); // Remove duplicatas
 }
 
 async function salvarTempo(jogo, inicio, fim) {
@@ -193,7 +139,7 @@ async function salvarTempo(jogo, inicio, fim) {
     inicio: inicio.toISOString(),
     fim: fim.toISOString(),
     tempoTotalMin: Math.round((fim - inicio) / 60000),
-    data: new Date().toISOString()
+    data: fim.toISOString() // usa a mesma data da sessão
   });
   fs.writeFileSync(logPath, JSON.stringify(dados, null, 2));
 }
@@ -209,71 +155,72 @@ async function verificar() {
       nomeDoJogo.toLowerCase().includes('launcher') ||
       nomeDoJogo.toLowerCase().includes('service')) {
       continue;
-      }
+    }
 
-      const emExecucao = processos.some(p => p.name === nomeDoJogo);
-      const sessao = estado[nomeDoJogo];
+    const emExecucao = processos.some(p => p.name === nomeDoJogo);
+    const sessao = estado[nomeDoJogo];
 
-      if (emExecucao) {
-        if (!sessao) {
-          const agora = new Date();
-          estado[nomeDoJogo] = { inicio: agora, ultimoFim: null };
-          console.log(`[${nomeDoJogo}] Iniciado às ${agora.toLocaleTimeString()}`);
-          notifier.notify({
-            title: 'Status Gamer',
-            message: `Início de jogo: ${nomesAmigaveis[nomeDoJogo] || nomeDoJogo}`,
-            sound: true,
-            icon: path.join(__dirname, 'icon.png')
-          });
-        }
-      } else if (sessao && !sessao.ultimoFim) {
-        const fim = new Date();
-        const tempoMin = Math.round((fim - sessao.inicio) / 60000);
-        await salvarTempo(nomeDoJogo, sessao.inicio, fim);
-        estado[nomeDoJogo].ultimoFim = fim;
-
-        console.log(`[${nomeDoJogo}] Encerrado às ${fim.toLocaleTimeString()} - Tempo: ${tempoMin} min`);
+    if (emExecucao) {
+      if (!sessao) {
+        const agora = new Date();
+        estado[nomeDoJogo] = { inicio: agora, ultimoFim: null };
+        console.log(`[${nomeDoJogo}] Iniciado às ${agora.toLocaleTimeString()}`);
         notifier.notify({
-          title: 'Status Gamer',
-          message: `Jogo encerrado: ${nomesAmigaveis[nomeDoJogo] || nomeDoJogo}\nTempo: ${tempoMin} min`,
+          title: 'Monitorando jogo...',
+          message: `Início de jogo: ${nomesAmigaveis[nomeDoJogo] || nomeDoJogo}`,
           sound: true,
-          icon: path.join(__dirname, 'icon.png')
+          icon: path.join(__dirname, 'icon.ico'),
+          appID: 'Steins;Tracker',
         });
       }
-    }
+    } else if (sessao && !sessao.ultimoFim) {
+      const fim = new Date();
+      const tempoMin = Math.round((fim - sessao.inicio) / 60000);
+      await salvarTempo(nomeDoJogo, sessao.inicio, fim);
+      estado[nomeDoJogo].ultimoFim = fim;
 
-    for (const jogo in estado) {
-      const fim = estado[jogo]?.ultimoFim;
-      if (fim && Date.now() - fim.getTime() > INTERVALO_SESSAO) {
-        delete estado[jogo];
-      }
-    }
-  }
-
-  // Verifica e cria o arquivo de nomes amigáveis se não existir
-  function inicializarArquivos() {
-    try {
-      if (!fs.existsSync(nomesAmigaveisPath)) {
-        fs.writeFileSync(nomesAmigaveisPath, '{}');
-        console.log('Arquivo nomes_amigaveis.json criado com sucesso.');
-      }
-
-      if (!fs.existsSync(selecionadosPath)) {
-        fs.writeFileSync(selecionadosPath, '[]');
-        console.log('Arquivo jogos_selecionados.json criado com sucesso.');
-      }
-
-      if (!fs.existsSync(logPath)) {
-        fs.writeFileSync(logPath, '[]');
-        console.log('Arquivo jogos_log.json criado com sucesso.');
-      }
-    } catch (err) {
-      console.error('Erro ao inicializar arquivos:', err.message);
+      console.log(`[${nomeDoJogo}] Encerrado às ${fim.toLocaleTimeString()} - Tempo: ${tempoMin} min`);
+      notifier.notify({
+        title: 'Status Gamer',
+        message: `Jogo encerrado: ${nomesAmigaveis[nomeDoJogo] || nomeDoJogo}\nTempo: ${tempoMin} min`,
+        sound: true,
+        icon: path.join(__dirname, 'icon.png')
+      });
     }
   }
 
-  // Inicializa os arquivos necessários
-  inicializarArquivos();
+  for (const jogo in estado) {
+    const fim = estado[jogo]?.ultimoFim;
+    if (fim && Date.now() - fim.getTime() > INTERVALO_SESSAO) {
+      delete estado[jogo];
+    }
+  }
+}
 
-  console.log("⏳ Monitor de jogos iniciado...");
-  setInterval(verificar, 10000);
+// Verifica e cria o arquivo de nomes amigáveis se não existir
+function inicializarArquivos() {
+  try {
+    if (!fs.existsSync(nomesAmigaveisPath)) {
+      fs.writeFileSync(nomesAmigaveisPath, '{}');
+      console.log('Arquivo nomes_amigaveis.json criado com sucesso.');
+    }
+
+    if (!fs.existsSync(selecionadosPath)) {
+      fs.writeFileSync(selecionadosPath, '[]');
+      console.log('Arquivo jogos_selecionados.json criado com sucesso.');
+    }
+
+    if (!fs.existsSync(logPath)) {
+      fs.writeFileSync(logPath, '[]');
+      console.log('Arquivo jogos_log.json criado com sucesso.');
+    }
+  } catch (err) {
+    console.error('Erro ao inicializar arquivos:', err.message);
+  }
+}
+
+// Inicializa os arquivos necessários
+inicializarArquivos();
+
+console.log("⏳ Monitor de jogos iniciado...");
+setInterval(verificar, 10000);
