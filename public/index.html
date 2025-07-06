@@ -738,7 +738,7 @@
         // Função para carregar os ícones do arquivo JSON
         async function loadGameIcons() {
             try {
-                const response = await fetch('data/icons.json');
+                const response = await fetch('/api/icons'); // antes era 'data/icons.json'
                 if (!response.ok) {
                     throw new Error('Falha ao carregar ícones');
                 }
@@ -750,6 +750,7 @@
                 };
             }
         }
+
 
         // Função para obter o ícone do jogo
         function getGameIcon(gameName) {
@@ -806,37 +807,42 @@
 
         async function carregarLogs() {
             try {
-                // Carrega os logs E os jogos selecionados
-                const [logsRes, selectedRes] = await Promise.all([
+                const [logsResponse, selectedResponse, friendlyNamesResponse] = await Promise.all([
                     fetch('/api/logs'),
-                    fetch('/api/jogos-selecionados')
+                    fetch('/api/jogos-selecionados'),
+                    fetch('/api/nomes-amigaveis')
                 ]);
 
-                if (!logsRes.ok || !selectedRes.ok) return [];
-
-                const [logs, selected] = await Promise.all([
-                    logsRes.json(),
-                    selectedRes.json()
+                const [logs, selected, friendlyNames] = await Promise.all([
+                    logsResponse.json(),
+                    selectedResponse.json(),
+                    friendlyNamesResponse.json()
                 ]);
 
-                // Filtra logs para incluir apenas jogos selecionados
-                const friendlyNames = await (await fetch('/api/nomes-amigaveis')).json();
-                const selectedNames = new Set([
-                    ...selected,
-                    ...Object.keys(friendlyNames).filter(exe => selected.includes(exe))
-                ]);
+                const selectedSet = new Set(selected);
 
-                return logs.filter(log => {
-                    // Verifica se o log.jogo é um nome amigável de um jogo selecionado
-                    return Object.entries(friendlyNames).some(
-                        ([exe, name]) => selected.includes(exe) && name === log.jogo
-                    ) || selected.includes(log.jogo); // Ou é um nome de executável selecionado
-                });
+                // Substitui nomes por nomes amigáveis nos logs
+                const filteredLogs = logs
+                    .filter(log => selectedSet.has(log.jogo) || friendlyNames[log.jogo])
+                    .map(log => {
+                        const nomeAmigavel = friendlyNames[log.jogo];
+                        const exeOriginal = Object.keys(friendlyNames).find(exe => friendlyNames[exe] === log.jogo);
+                        if (nomeAmigavel) {
+                            return { ...log, jogo: nomeAmigavel };
+                        } else if (exeOriginal && selectedSet.has(exeOriginal)) {
+                            return { ...log, jogo: friendlyNames[exeOriginal] };
+                        } else {
+                            return log;
+                        }
+                    });
+
+                return filteredLogs;
             } catch (error) {
                 console.error('Erro ao carregar logs:', error);
                 return [];
             }
         }
+
 
         function filtrarPorPeriodo(logs, dias) {
             if (dias === 'todos') return logs;
@@ -1273,7 +1279,21 @@
         // Troca a cada 30 segundos
         setInterval(trocarSlogan, 30000);
     </script>
+    <script>
+        const { ipcRenderer } = require('electron');
 
+        ipcRenderer.on('update_available', () => {
+            alert('Uma nova atualização está disponível. Baixando...');
+        });
+
+        ipcRenderer.on('update_downloaded', () => {
+            const shouldUpdate = confirm('Atualização pronta. Deseja reiniciar e aplicar?');
+            if (shouldUpdate) {
+                ipcRenderer.send('restart_app');
+            }
+        });
+
+    </script>
 
 </body>
 
