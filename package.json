@@ -1,18 +1,62 @@
 {
-  "name": "status-gamer",
-  "version": "1.0.0",
-  "description": "Monitor de tempo de jogo",
-  "bin": "monitor.js",
+  "name": "steins-tracker",
+  "version": "1.0.5",
+  "description": "Steins;Tracker é uma ferramenta de monitoramento local que registra automaticamente o tempo de jogo no seu PC.",
   "type": "module",
+  "main": "main.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "electron .",
+    "build": "electron-builder"
   },
+  "author": "Guilherme Dill",
+  "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
+    "electron-updater": "^6.6.2",
     "express": "^4.21.2",
     "node-notifier": "^10.0.1",
+    "node-windows": "^1.0.0-beta.8",
     "ps-list": "^8.0.0",
     "regedit": "^3.0.3",
     "vdf-parser": "^1.1.0"
+  },
+  "devDependencies": {
+    "electron": "^37.2.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.statusgamer.app",
+    "productName": "SteinsTracker",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "guilhermealceu",
+        "repo": "Steins-Tracker"
+      }
+    ],
+    "asarUnpack": [
+      "node_modules/node-notifier/**",
+      "node_modules/ps-list/**"
+    ],
+    "files": [
+      "**/*",
+      "!node_modules/.cache"
+    ],
+    "win": {
+      "icon": "icon.ico",
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "runAfterFinish": true,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "SteinsTracker"
+    }
   }
 }
