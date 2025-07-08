@@ -1,8 +1,6 @@
 # 🎮 Steins;Tracker
 
-**Steins;Tracker** é uma ferramenta de monitoramento local que registra automaticamente o tempo de jogo no seu PC. Ideal para jogadores que desejam acompanhar sua rotina gamer ou pais que queiram visualizar o tempo de uso de forma simples, bonita e funcional.
-
-> 🧠 Inspirado pelo universo de *Steins;Gate*, com interface futurista, dark mode e visual imersivo.
+**Steins;Tracker** é uma ferramenta de monitoramento local que registra automaticamente o tempo de jogo no seu PC. Ideal para jogadores que desejam acompanhar sua rotina gamer de forma simples mas bonita e funcional.
 
 ---
 
@@ -12,10 +10,12 @@
 - 🔍 Detecta executáveis de jogos (.exe) e atualiza sessões em tempo real
 - 🌐 Interface web amigável e intuitiva
 - 📊 **Dashboard com gráficos interativos** de estatísticas
-- 📁 Suporte a jogos da Steam, Epic, Origin, manual, etc.
-- 💾 Armazena os dados localmente em `jogos_log.json`
+- 📁 Procura nas pastas por meio de exe e informando o caminho
+- 💾 Armazena os dados localmente em `jogos_log.json` nos seus documentos
 - 🔔 Notificações no sistema ao iniciar ou encerrar um jogo
 - 🖼️ Personalização com ícones e wallpapers de fundo
+- ✅ Botão para procurar atualizações e instalar diretamente no app
+- 🌐 Qr code nas configurações gerado apartir do 
 
 ---
 
